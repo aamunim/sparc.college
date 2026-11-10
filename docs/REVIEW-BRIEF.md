@@ -182,3 +182,5 @@ flowchart LR
 - [`requirements.md`](./requirements.md): মূল রিকোয়ারমেন্ট
 - [`decisions-log.md`](./decisions-log.md): সব সিদ্ধান্ত ও কারণ
 - [`ideas-backlog.md`](./ideas-backlog.md): MVP-র বাইরের আইডিয়া
+- [`risk-register.md`](./risk-register.md): ঝুঁকির তালিকা, প্রতিরোধ আর CI চেক
+- গাইডলাইনের **§২০**: একই স্ট্যাকের আরেকটা SaaS প্রজেক্টের বাস্তব অভিজ্ঞতা থেকে নেওয়া টেকনিক্যাল চ্যালেঞ্জ (টেন্যান্ট ফাঁস, কিউ, concurrency, টাকা, মেসেজিং, রিলিজ)

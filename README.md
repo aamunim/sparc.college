@@ -11,3 +11,5 @@ SaaS-ভিত্তিক মোবাইল ও ওয়েব লার্�
 - [রিকোয়ারমেন্ট](docs/requirements.md)
 - [সিদ্ধান্তের লগ](docs/decisions-log.md)
 - [আইডিয়া ব্যাকলগ](docs/ideas-backlog.md)
+- [ঝুঁকির রেজিস্টার](docs/risk-register.md)
+- [শিক্ষা ও ঘটনা-পরবর্তী লেখা](docs/lessons.md)
