@@ -22,6 +22,9 @@ updates:
       - dependency-name: 'typescript'
       - dependency-name: 'nativewind'
       - dependency-name: 'tailwindcss'
+      # eslint-config-expo যে ESLint major সমর্থন করে, সেটাতেই থাকবে (Expo SDK-র সাথে আপগ্রেড)
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
     groups:
       dev-tools:
         dependency-type: development
