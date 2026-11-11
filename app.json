@@ -8,7 +8,7 @@
     "scheme": "sparc",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "college.sparc.app"
+      "bundleIdentifier": "com.sparc.college"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "college.sparc.app",
+      "package": "com.sparc.college",
       "allowBackup": false
     },
     "web": {

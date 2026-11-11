@@ -130,7 +130,7 @@ flowchart LR
 | # | বিষয় | এখনকার ডিফল্ট |
 |---|---|---|
 | D3a | অ্যাডমিন প্যানেল: Expo Web নাকি Next.js (static export, monorepo) | ফেজ ৩ পর্যন্ত খোলা; `core` লজিক React Native-নির্ভর হবে না |
-| D7 | Android package নাম | `college.sparc.app` |
+| D7 | Android package নাম | ✅ `com.sparc.college` |
 | D8 | লঞ্চে iOS | না; শুধু Android আর Web |
 | D9 | পেমেন্ট চ্যানেল | Play-এর নীতি যাচাই করে, ফেজ ৭-এর আগে |
 | D10 | স্কুলের শিক্ষক কি শিক্ষার্থীর নিজে কেনা মার্কেটপ্লেস কোর্স দেখবেন | না |
