@@ -41,7 +41,7 @@ jobs:
       - name: Unit tests
         run: npm test -- --ci
       - name: Mobile web build (Expo)
-        run: npm run build:web -- --output-dir dist
+        run: npm run export:web -w @sparc/mobile -- --output-dir dist
       - name: Admin build (Next.js static export)
         run: npm run build:admin
       - name: Dependency audit (production deps, high+)

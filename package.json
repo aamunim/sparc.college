@@ -15,7 +15,7 @@
     "format:check": "prettier --check .",
     "check:i18n": "node scripts/check-locales.js",
     "test": "npm test -w @sparc/mobile --",
-    "build:web": "npm run export:web -w @sparc/mobile",
+    "build:web": "npm run export:web -w @sparc/mobile -- --output-dir dist",
     "build:admin": "npm run build -w @sparc/admin",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run check:i18n && npm test -- --ci",
     "db:start": "supabase start",
