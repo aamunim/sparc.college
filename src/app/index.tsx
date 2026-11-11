@@ -1,6 +1,5 @@
-import { useTheme } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   formatDate,
@@ -11,75 +10,81 @@ import {
   type Language,
 } from '@/core/i18n';
 import { changeLanguage } from '@/platform/i18n';
-import { fonts } from '@/ui/tokens/fonts';
+import { Button, Card, Screen, Text, THEME_MODES, useAppTheme } from '@/ui';
 
-// ফেজ ০-এর অস্থায়ী হোম স্ক্রিন: ভাষা, ফন্ট আর ফরম্যাট যাচাইয়ের জন্য।
+// ফেজ ০-এর অস্থায়ী হোম স্ক্রিন: ভাষা, থিম, ফন্ট আর ডিজাইন সিস্টেম যাচাইয়ের জন্য।
 const ARABIC_SAMPLE = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
 const APP_NAME = 'SPARC';
 
 export default function HomeScreen() {
-  const { colors } = useTheme();
   const { t, i18n } = useTranslation();
+  const { mode, setMode } = useAppTheme();
   const language: Language = isLanguage(i18n.language) ? i18n.language : 'bn';
-  const textColor = { color: colors.text };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, textColor]}>{APP_NAME}</Text>
-      <Text style={[styles.body, textColor]}>{t('app.tagline')}</Text>
-      <Text style={[styles.body, textColor]}>{t('home.phase')}</Text>
-
-      <View style={styles.block}>
-        <Text style={[styles.body, textColor]}>
-          {t('home.sampleNumber', { value: formatNumber(1234567, language) })}
+    <Screen>
+      <View className="items-center gap-1 pt-6">
+        <Text variant="display">{APP_NAME}</Text>
+        <Text tone="muted">{t('app.tagline')}</Text>
+        <Text variant="caption" tone="muted">
+          {t('home.phase')}
         </Text>
-        <Text style={[styles.body, textColor]}>
-          {t('home.sampleMoney', { value: formatMoney(120050, language) })}
-        </Text>
-        <Text style={[styles.body, textColor]}>
-          {t('home.sampleDate', { value: formatDate(new Date(), language) })}
-        </Text>
-        <Text style={[styles.body, textColor]}>{t('home.arabicSample')}</Text>
-        <Text style={[styles.arabic, textColor]}>{ARABIC_SAMPLE}</Text>
       </View>
 
-      <Text style={[styles.label, textColor]}>{t('settings.language.label')}</Text>
-      <View style={styles.row}>
-        {SUPPORTED_LANGUAGES.map((lang) => {
-          const selected = lang === language;
-          return (
-            <Pressable
+      <Card className="gap-1">
+        <Text variant="heading">{t('home.formatTitle')}</Text>
+        <Text>{t('home.sampleNumber', { value: formatNumber(1234567, language) })}</Text>
+        <Text>{t('home.sampleMoney', { value: formatMoney(120050, language) })}</Text>
+        <Text>{t('home.sampleDate', { value: formatDate(new Date(), language) })}</Text>
+        <Text variant="label" tone="muted" className="mt-2">
+          {t('home.arabicSample')}
+        </Text>
+        <Text variant="arabic" className="text-center">
+          {ARABIC_SAMPLE}
+        </Text>
+      </Card>
+
+      <Card className="gap-3">
+        <Text variant="heading">{t('settings.language.label')}</Text>
+        <View className="flex-row flex-wrap gap-3">
+          {SUPPORTED_LANGUAGES.map((lang) => (
+            <Button
               key={lang}
-              accessibilityRole="button"
-              accessibilityState={{ selected }}
+              label={t(`settings.language.${lang}`)}
+              variant={lang === language ? 'primary' : 'secondary'}
+              accessibilityState={{ selected: lang === language }}
               onPress={() => changeLanguage(i18n, lang)}
-              style={[
-                styles.button,
-                { borderColor: colors.border },
-                selected && { backgroundColor: colors.primary },
-              ]}>
-              <Text style={[styles.body, textColor]}>{t(`settings.language.${lang}`)}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
-    </View>
+            />
+          ))}
+        </View>
+      </Card>
+
+      <Card className="gap-3">
+        <Text variant="heading">{t('settings.theme.label')}</Text>
+        <View className="flex-row flex-wrap gap-3">
+          {THEME_MODES.map((m) => (
+            <Button
+              key={m}
+              label={t(`settings.theme.${m}`)}
+              variant={m === mode ? 'primary' : 'secondary'}
+              accessibilityState={{ selected: m === mode }}
+              onPress={() => setMode(m)}
+            />
+          ))}
+        </View>
+      </Card>
+
+      <Card className="gap-3">
+        <Text variant="heading">{t('home.buttonsTitle')}</Text>
+        <View className="flex-row flex-wrap gap-3">
+          <Button label={t('home.sampleButton')} />
+          <Button label={t('home.sampleButton')} variant="secondary" />
+          <Button label={t('home.sampleButton')} variant="ghost" />
+          <Button label={t('home.sampleButton')} variant="danger" />
+          <Button label={t('home.sampleButton')} loading />
+          <Button label={t('home.sampleButton')} disabled />
+        </View>
+      </Card>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  arabic: { fontFamily: fonts.arabic, fontSize: 26, lineHeight: 52, writingDirection: 'rtl' },
-  block: { alignItems: 'center', gap: 4, marginVertical: 24 },
-  body: { fontFamily: fonts.regular, fontSize: 16, lineHeight: 26 },
-  button: {
-    borderRadius: 8,
-    borderWidth: 1,
-    minHeight: 48,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  container: { alignItems: 'center', flex: 1, justifyContent: 'center', padding: 16 },
-  label: { fontFamily: fonts.semibold, fontSize: 16, lineHeight: 26, marginBottom: 8 },
-  row: { flexDirection: 'row', gap: 12 },
-  title: { fontFamily: fonts.bold, fontSize: 36, lineHeight: 52 },
-});

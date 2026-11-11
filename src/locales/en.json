@@ -7,13 +7,22 @@
     "sampleNumber": "Number: {{value}}",
     "sampleMoney": "Money: {{value}}",
     "sampleDate": "Today: {{value}}",
-    "arabicSample": "Arabic font:"
+    "arabicSample": "Arabic font:",
+    "formatTitle": "Formatting",
+    "buttonsTitle": "Buttons",
+    "sampleButton": "Submit"
   },
   "settings": {
     "language": {
       "label": "Language",
       "bn": "বাংলা",
       "en": "English"
+    },
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
     }
   }
 }

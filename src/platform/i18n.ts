@@ -1,28 +1,21 @@
 // ভাষার প্ল্যাটফর্ম-নির্ভর অংশ: ফোনের ভাষা চেনা আর ইউজারের পছন্দ সেভ রাখা।
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getLocales } from 'expo-localization';
 import type { i18n } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { initI18n, isLanguage, pickLanguage, type Language } from '@/core/i18n';
 
-const STORAGE_KEY = 'sparc.language';
+import { readPreference, writePreference } from './preferences';
+
+const PREF_KEY = 'language';
 
 async function loadSavedLanguage(): Promise<Language | null> {
-  try {
-    const saved = await AsyncStorage.getItem(STORAGE_KEY);
-    return isLanguage(saved) ? saved : null;
-  } catch {
-    return null; // স্টোরেজ না পেলে ফোনের ভাষায় চলবে
-  }
+  const saved = await readPreference(PREF_KEY);
+  return isLanguage(saved) ? saved : null;
 }
 
 export async function saveLanguage(language: Language): Promise<void> {
-  try {
-    await AsyncStorage.setItem(STORAGE_KEY, language);
-  } catch {
-    // সেভ না হলেও এই সেশনে ভাষা বদলাবে
-  }
+  await writePreference(PREF_KEY, language);
 }
 
 function detectDeviceLanguage(): Language {

@@ -183,7 +183,8 @@ SPARC-এ শুরুতেই কয়েকটা **সাধারণ ই�
   src/
     app/                     Expo Router স্ক্রিন (Expo SDK 58-এর নিয়মে src/app) — পাতলা; শুধু features থেকে import
     core/                    supabase, i18n, query client, permissions (can), flags, settings, events, registry
-    ui/                      ডিজাইন সিস্টেম (Button, Card, Input, …)
+    platform/                React Native-নির্ভর অ্যাডাপ্টার (ফোনের ভাষা, ফন্ট লোড, পছন্দ সেভ) — core/ যেন RN-মুক্ত থাকে (D3a)
+    ui/                      ডিজাইন সিস্টেম (tokens/, theme, Text, Button, Card, Screen, …) — NativeWind + CSS ভেরিয়েবলে লাইট/ডার্ক
     features/
       auth/  institutions/  groups/  courses/  content-items/  access-rules/
       assessments/  submissions/  threads/  tracking/  dashboards/

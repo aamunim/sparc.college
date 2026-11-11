@@ -7,13 +7,22 @@
     "sampleNumber": "সংখ্যা: {{value}}",
     "sampleMoney": "টাকা: {{value}}",
     "sampleDate": "আজ: {{value}}",
-    "arabicSample": "আরবি ফন্ট:"
+    "arabicSample": "আরবি ফন্ট:",
+    "formatTitle": "ফরম্যাট",
+    "buttonsTitle": "বাটন",
+    "sampleButton": "জমা দিন"
   },
   "settings": {
     "language": {
       "label": "ভাষা",
       "bn": "বাংলা",
       "en": "English"
+    },
+    "theme": {
+      "label": "থিম",
+      "light": "লাইট",
+      "dark": "ডার্ক",
+      "system": "সিস্টেম অনুযায়ী"
     }
   }
 }
