@@ -4,3 +4,6 @@ dist
 package-lock.json
 docs
 assets
+.next
+out
+**/next-env.d.ts

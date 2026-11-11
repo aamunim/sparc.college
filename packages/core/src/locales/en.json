@@ -1,0 +1,54 @@
+{
+  "app": {
+    "tagline": "Learn, teach, research"
+  },
+  "home": {
+    "phase": "Phase 0 — setup in progress",
+    "sampleNumber": "Number: {{value}}",
+    "sampleMoney": "Money: {{value}}",
+    "sampleDate": "Today: {{value}}",
+    "arabicSample": "Arabic font:",
+    "formatTitle": "Formatting",
+    "buttonsTitle": "Buttons",
+    "sampleButton": "Submit",
+    "backend": {
+      "title": "Backend",
+      "configured": "Supabase is configured ({{env}})",
+      "notConfigured": "Supabase is not configured yet — see .env"
+    }
+  },
+  "settings": {
+    "language": {
+      "label": "Language",
+      "bn": "বাংলা",
+      "en": "English"
+    },
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "admin": {
+    "notConfigured": "Supabase is not configured — see apps/admin/.env.local",
+    "loading": "Loading…",
+    "logout": "Log out",
+    "login": {
+      "title": "Log in",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "error": "Email or password is incorrect"
+    },
+    "access": {
+      "title": "My institutions and roles",
+      "signedInAs": "Signed in as {{email}}",
+      "institution": "Institution",
+      "roles": "Roles",
+      "permissions": "Permissions",
+      "none": "You have no role in any institution",
+      "loadFailed": "Could not load your access — please try again"
+    }
+  }
+}

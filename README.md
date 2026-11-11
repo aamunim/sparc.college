@@ -4,9 +4,19 @@ SaaS-ভিত্তিক মোবাইল ও ওয়েব লার্�
 
 > ফেজ ০ (সেটআপ) চলছে।
 
+## রিপোর কাঠামো (monorepo, D3a)
+
+```
+apps/mobile     Expo অ্যাপ (Android + Web) — শিক্ষার্থী, অভিভাবক, শিক্ষক
+apps/admin      Next.js অ্যাডমিন প্যানেল (static export)
+packages/core   শেয়ার করা কোড: ভাষা/অনুবাদ, ফরম্যাট, কনফিগ, Supabase ক্লায়েন্ট, ডেটাবেস টাইপ, রঙের টোকেন
+supabase/       ডেটাবেস: migration, pgTAP টেস্ট, seed, benchmark
+docs/           গাইডলাইন, সিদ্ধান্ত, স্কিমা
+```
+
 ## চালানোর নিয়ম
 
-প্রয়োজন: Node.js 22+
+প্রয়োজন: Node.js 22+ (npm workspaces)
 
 ```bash
 npm install
@@ -15,37 +25,35 @@ npm install
 কনফিগ (Supabase-এর পাবলিক URL আর anon key):
 
 ```bash
-cp .env.example .env
+cp apps/mobile/.env.example apps/mobile/.env
 ```
-
-`.env` ছাড়াও অ্যাপ চালু হয়; ডেটাবেসের কাজ তখন চলবে না। গোপন key (service_role, DB পাসওয়ার্ড) কখনো `.env`-এ নয়।
 
 ```bash
-npx expo start
+cp apps/admin/.env.example apps/admin/.env.local
 ```
 
-অন্যান্য কমান্ড:
+`.env` ছাড়াও দুটো অ্যাপ চালু হয়; ডেটাবেসের কাজ তখন চলবে না। গোপন key (service_role, DB পাসওয়ার্ড) কখনো এখানে নয়।
 
-- `npm run typecheck` — TypeScript যাচাই
-- `npm run lint` — ESLint (মডিউল-সীমা, সরাসরি লেখা/রং, `any` নিষেধ)
-- `npm run format` / `npm run format:check` — Prettier
-- `npm run check:i18n` — bn/en অনুবাদের key মিলছে কিনা
-- `npm test` — ইউনিট টেস্ট (Jest)
-- `npm run check` — PR-এর আগে সব দ্রুত চেক একসাথে (CI-তেও এগুলোই চলে)
+মোবাইল অ্যাপ:
+
+```bash
+npm run mobile
+```
+
+অ্যাডমিন প্যানেল (http://localhost:3000):
+
+```bash
+npm run admin
+```
+
+অন্যান্য কমান্ড (রুট থেকে):
+
+- `npm run check` — PR-এর আগে সব দ্রুত চেক একসাথে (typecheck, lint, format, i18n, test)
+- `npm run typecheck` / `lint` / `format` / `test` / `check:i18n`
+- `npm run build:web` / `build:admin` — মোবাইলের ওয়েব বিল্ড / অ্যাডমিন বিল্ড
 - `npm run db:start` / `db:reset` / `db:test` / `db:types` / `db:lint` / `db:bench` — লোকাল Supabase (Docker লাগে), migration, pgTAP টেস্ট, টাইপ জেনারেশন, SQL lint, গতি পরীক্ষা
-- `npm run export:web` — ওয়েব বিল্ড
 
-নেটিভ মডিউল থাকায় Android-এ Expo Go নয়, development build লাগবে (ফেজ ০-এর EAS ধাপে সেটআপ হবে)।
-
-## ডকুমেন্টেশন
-
-- [রিভিউ ব্রিফ](docs/REVIEW-BRIEF.md): সিনিয়র ডেভেলপারের রিভিউয়ের জন্য সারসংক্ষেপ
-- [ডেভেলপমেন্ট গাইডলাইন](docs/DEVELOPMENT-GUIDE.md): আর্কিটেকচার, নিয়ম, ফেজ প্ল্যান
-- [রিকোয়ারমেন্ট](docs/requirements.md)
-- [সিদ্ধান্তের লগ](docs/decisions-log.md)
-- [আইডিয়া ব্যাকলগ](docs/ideas-backlog.md)
-- [ঝুঁকির রেজিস্টার](docs/risk-register.md)
-- [শিক্ষা ও ঘটনা-পরবর্তী লেখা](docs/lessons.md)
+নেটিভ মডিউল থাকায় Android-এ Expo Go নয়, development build লাগবে (নিচে দেখুন)। EAS-এর সব কমান্ড `apps/mobile` ফোল্ডার থেকে চালাতে হবে।
 
 ## বিল্ড ও রিলিজ সেটআপ (একবার করতে হবে)
 
@@ -65,7 +73,7 @@ npx eas-cli@latest init
 npx eas-cli@latest update:configure
 ```
 
-`init` আর `update:configure` `app.json`-এ প্রজেক্ট আইডি আর আপডেটের URL বসাবে — সেই পরিবর্তন commit করুন।
+(`apps/mobile` থেকে চালান) `init` আর `update:configure` `apps/mobile/app.json`-এ প্রজেক্ট আইডি আর আপডেটের URL বসাবে — সেই পরিবর্তন commit করুন।
 EAS environment variables (Expo ড্যাশবোর্ড → Project → Environment variables), প্রতিটা environment-এ (development, preview, production):
 
 - `EXPO_PUBLIC_APP_ENV` (plaintext): `dev` / `staging` / `prod`
@@ -99,7 +107,7 @@ npx eas-cli@latest build --platform android --profile development
 
 ## লোকাল টেস্ট ইউজার
 
-`npx supabase start` চালালে seed থেকে এই ইউজাররা তৈরি হয় (পাসওয়ার্ড সবার `password123` — শুধু লোকাল, প্রোডাকশনে seed চলে না):
+`npx supabase start` চালালে seed থেকে এই ইউজাররা তৈরি হয় (মোবাইল অ্যাপ আর অ্যাডমিন প্যানেল দুটোতেই লগইন করা যায়) (পাসওয়ার্ড সবার `password123` — শুধু লোকাল, প্রোডাকশনে seed চলে না):
 
 | ইমেইল                                       | ভূমিকা                                 |
 | ------------------------------------------- | -------------------------------------- |

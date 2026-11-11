@@ -1,0 +1,54 @@
+{
+  "app": {
+    "tagline": "শেখা, শেখানো, গবেষণা"
+  },
+  "home": {
+    "phase": "ফেজ ০ — সেটআপ চলছে",
+    "sampleNumber": "সংখ্যা: {{value}}",
+    "sampleMoney": "টাকা: {{value}}",
+    "sampleDate": "আজ: {{value}}",
+    "arabicSample": "আরবি ফন্ট:",
+    "formatTitle": "ফরম্যাট",
+    "buttonsTitle": "বাটন",
+    "sampleButton": "জমা দিন",
+    "backend": {
+      "title": "ব্যাকএন্ড",
+      "configured": "Supabase কনফিগার করা আছে ({{env}})",
+      "notConfigured": "Supabase এখনো কনফিগার করা হয়নি — .env দেখুন"
+    }
+  },
+  "settings": {
+    "language": {
+      "label": "ভাষা",
+      "bn": "বাংলা",
+      "en": "English"
+    },
+    "theme": {
+      "label": "থিম",
+      "light": "লাইট",
+      "dark": "ডার্ক",
+      "system": "সিস্টেম অনুযায়ী"
+    }
+  },
+  "admin": {
+    "notConfigured": "Supabase কনফিগার করা হয়নি — apps/admin/.env.local দেখুন",
+    "loading": "লোড হচ্ছে…",
+    "logout": "লগআউট",
+    "login": {
+      "title": "লগইন",
+      "email": "ইমেইল",
+      "password": "পাসওয়ার্ড",
+      "submit": "লগইন করুন",
+      "error": "ইমেইল বা পাসওয়ার্ড ঠিক নেই"
+    },
+    "access": {
+      "title": "আমার প্রতিষ্ঠান ও ভূমিকা",
+      "signedInAs": "লগইন: {{email}}",
+      "institution": "প্রতিষ্ঠান",
+      "roles": "ভূমিকা",
+      "permissions": "পারমিশন",
+      "none": "আপনার কোনো প্রতিষ্ঠানে ভূমিকা নেই",
+      "loadFailed": "তথ্য লোড করা যায়নি — আবার চেষ্টা করুন"
+    }
+  }
+}

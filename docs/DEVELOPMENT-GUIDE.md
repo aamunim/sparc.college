@@ -177,35 +177,39 @@ SPARC-এ শুরুতেই কয়েকটা **সাধারণ ই�
 
 ## ৫. প্রজেক্ট কাঠামো
 
-### ৫.১ ফোল্ডার (রিপোর রুটে)
+### ৫.১ ফোল্ডার (monorepo, npm workspaces — D3a)
 ```
 /
-  src/
-    app/                     Expo Router স্ক্রিন (Expo SDK 58-এর নিয়মে src/app) — পাতলা; শুধু features থেকে import
-    core/                    supabase, i18n, query client, permissions (can), flags, settings, events, registry
-    platform/                React Native-নির্ভর অ্যাডাপ্টার (ফোনের ভাষা, ফন্ট লোড, পছন্দ সেভ) — core/ যেন RN-মুক্ত থাকে (D3a)
-    ui/                      ডিজাইন সিস্টেম (tokens/, theme, Text, Button, Card, Screen, …) — NativeWind + CSS ভেরিয়েবলে লাইট/ডার্ক
-    features/
-      auth/  institutions/  groups/  courses/  content-items/  access-rules/
-      assessments/  submissions/  threads/  tracking/  dashboards/
-      commerce/  notifications/  messaging/  certificates/  attendance/
-      teach/  research/  library/  hifz/
-        (প্রতিটার ভেতরে: api.ts, hooks/, components/, screens/, types.ts, index.ts)
-    locales/                 bn.json, en.json
-    types/database.ts        (অটো-জেনারেটেড, হাতে এডিট নিষেধ)
+  apps/
+    mobile/                  Expo অ্যাপ (Android + Web)
+      src/
+        app/                 Expo Router স্ক্রিন (SDK 58: src/app) — পাতলা; শুধু features থেকে import
+        platform/            React Native-নির্ভর অ্যাডাপ্টার (ফোনের ভাষা, ফন্ট, পছন্দ সেভ, Supabase, Sentry)
+        ui/                  ডিজাইন সিস্টেম (tokens/, theme, Text, Button, Card, Screen, …) — NativeWind
+        features/
+          auth/  institutions/  groups/  courses/  content-items/  access-rules/
+          assessments/  submissions/  threads/  tracking/  dashboards/
+          commerce/  notifications/  messaging/  certificates/  attendance/
+          teach/  research/  library/  hifz/
+            (প্রতিটার ভেতরে: api.ts, hooks/, components/, screens/, types.ts, index.ts)
+      app.json, eas.json, metro/babel/tailwind config
+    admin/                   Next.js অ্যাডমিন প্যানেল (static export) — app/, lib/
+  packages/
+    core/                    @sparc/core — প্ল্যাটফর্ম-নিরপেক্ষ শেয়ার করা কোড (ESLint যাচাই করে)
+      src/  env.ts, redact.ts, i18n/, supabase/, design/colors.json, locales/bn.json|en.json, types/database.ts
   supabase/
     migrations/              শুধু নতুন ফাইল; পুরনো কখনো এডিট নয়
-    functions/               send-sms-hook, payment-init, payment-ipn, notify, certificate, reports, rollover
+    functions/               Edge Functions
     tests/                   pgTAP (RLS ও ফাংশন টেস্ট)
+    bench/                   গতি পরীক্ষা ("বড় স্কুল")
     seed.sql
   docs/                      DEVELOPMENT-GUIDE.md, requirements.md, decisions-log.md, ideas-backlog.md, schema.md, runbooks/
   .github/workflows/         ci.yml, eas-update.yml, eas-build.yml
-  app.json, eas.json, tsconfig.json, .env.example
 ```
 
 ### ৫.২ স্ক্রিন কাঠামো (Expo Router)
 ```
-src/app/
+apps/mobile/src/app/
   (auth)/        login, otp, signup, onboarding (ভূমিকা, প্রতিষ্ঠান কোড, সন্তান লিংক, সম্মতি)
   (app)/
     (tabs)/      learn | teach | research | library | account   ← রেজিস্ট্রি থেকে পারমিশন/ফ্ল্যাগ অনুযায়ী
@@ -213,7 +217,6 @@ src/app/
     dashboard/   student | parent | teacher | coordinator        ← উইজেট রেজিস্ট্রি
     groups/[id], research/[id], library/book/[id], hifz/[id]
     messages/, notifications/
-  admin/         (শুধু ওয়েব) institutions, users, roles, features, bulk-upload, courses, payments, analytics, moderation
   verify/[code]  (পাবলিক সার্টিফিকেট যাচাই)
   delete-account (পাবলিক ওয়েব পেজ — Play Store-এর শর্ত)
 ```

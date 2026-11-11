@@ -15,6 +15,10 @@ concurrency:
   group: eas-update-${{ github.ref }}
   cancel-in-progress: false
 
+defaults:
+  run:
+    working-directory: apps/mobile
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -32,6 +36,7 @@ jobs:
     steps:
       - name: Check secrets
         id: secrets
+        working-directory: .
         run: |
           if [ -z "$EXPO_TOKEN" ]; then
             echo "::notice::EXPO_TOKEN নেই — EAS Update বাদ (README-এর সেটআপ দেখুন)"
@@ -55,12 +60,14 @@ jobs:
           version: 3.1.0
       - name: Push database migrations
         if: steps.secrets.outputs.db == 'true'
+        working-directory: .
         run: |
           supabase link --project-ref "$SUPABASE_PROJECT_REF"
           supabase db push --include-all
       # ২) Edge Functions
       - name: Deploy Edge Functions
         if: steps.secrets.outputs.db == 'true' && hashFiles('supabase/functions/*/index.ts') != ''
+        working-directory: .
         run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"
 
       # ৩) EAS Update
@@ -76,6 +83,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
       - name: Install dependencies
         if: steps.secrets.outputs.eas == 'true'
+        working-directory: .
         run: npm ci --no-audit --no-fund
       - name: Publish update
         if: steps.secrets.outputs.eas == 'true'

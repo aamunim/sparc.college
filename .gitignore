@@ -43,3 +43,6 @@ example
 # generated native folders
 /ios
 /android
+.next/
+out/
+next-env.d.ts

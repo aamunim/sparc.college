@@ -1,6 +1,6 @@
 // bn.json আর en.json-এর key হুবহু মিলছে কিনা যাচাই করে (CI-তে চলবে)।
-const bn = require('../src/locales/bn.json');
-const en = require('../src/locales/en.json');
+const bn = require('../packages/core/src/locales/bn.json');
+const en = require('../packages/core/src/locales/en.json');
 
 function keys(obj, prefix = '') {
   return Object.entries(obj).flatMap(([k, v]) =>
