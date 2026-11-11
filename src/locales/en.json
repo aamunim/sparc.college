@@ -10,7 +10,12 @@
     "arabicSample": "Arabic font:",
     "formatTitle": "Formatting",
     "buttonsTitle": "Buttons",
-    "sampleButton": "Submit"
+    "sampleButton": "Submit",
+    "backend": {
+      "title": "Backend",
+      "configured": "Supabase is configured ({{env}})",
+      "notConfigured": "Supabase is not configured yet — see .env"
+    }
   },
   "settings": {
     "language": {

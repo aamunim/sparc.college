@@ -12,6 +12,14 @@ SaaS-ভিত্তিক মোবাইল ও ওয়েব লার্�
 npm install
 ```
 
+কনফিগ (Supabase-এর পাবলিক URL আর anon key):
+
+```bash
+cp .env.example .env
+```
+
+`.env` ছাড়াও অ্যাপ চালু হয়; ডেটাবেসের কাজ তখন চলবে না। গোপন key (service_role, DB পাসওয়ার্ড) কখনো `.env`-এ নয়।
+
 ```bash
 npx expo start
 ```
@@ -21,6 +29,8 @@ npx expo start
 - `npm run typecheck` — TypeScript যাচাই
 - `npm run lint` — ESLint (মডিউল-সীমা, সরাসরি লেখা/রং, `any` নিষেধ)
 - `npm run format` / `npm run format:check` — Prettier
+- `npm run check:i18n` — bn/en অনুবাদের key মিলছে কিনা
+- `npm run db:start` / `db:reset` / `db:test` / `db:types` — লোকাল Supabase (Docker লাগে), migration, pgTAP টেস্ট, টাইপ জেনারেশন
 - `npm run export:web` — ওয়েব বিল্ড
 
 নেটিভ মডিউল থাকায় Android-এ Expo Go নয়, development build লাগবে (ফেজ ০-এর EAS ধাপে সেটআপ হবে)।

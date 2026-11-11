@@ -10,7 +10,12 @@
     "arabicSample": "আরবি ফন্ট:",
     "formatTitle": "ফরম্যাট",
     "buttonsTitle": "বাটন",
-    "sampleButton": "জমা দিন"
+    "sampleButton": "জমা দিন",
+    "backend": {
+      "title": "ব্যাকএন্ড",
+      "configured": "Supabase কনফিগার করা আছে ({{env}})",
+      "notConfigured": "Supabase এখনো কনফিগার করা হয়নি — .env দেখুন"
+    }
   },
   "settings": {
     "language": {

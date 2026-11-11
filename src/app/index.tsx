@@ -9,7 +9,9 @@ import {
   SUPPORTED_LANGUAGES,
   type Language,
 } from '@/core/i18n';
+import { appConfig } from '@/platform/env';
 import { changeLanguage } from '@/platform/i18n';
+import { isSupabaseConfigured } from '@/platform/supabase';
 import { Button, Card, Screen, Text, THEME_MODES, useAppTheme } from '@/ui';
 
 // ফেজ ০-এর অস্থায়ী হোম স্ক্রিন: ভাষা, থিম, ফন্ট আর ডিজাইন সিস্টেম যাচাইয়ের জন্য।
@@ -72,6 +74,15 @@ export default function HomeScreen() {
             />
           ))}
         </View>
+      </Card>
+
+      <Card className="gap-1">
+        <Text variant="heading">{t('home.backend.title')}</Text>
+        {isSupabaseConfigured() ? (
+          <Text tone="success">{t('home.backend.configured', { env: appConfig.appEnv })}</Text>
+        ) : (
+          <Text tone="muted">{t('home.backend.notConfigured')}</Text>
+        )}
       </Card>
 
       <Card className="gap-3">

@@ -1,0 +1,20 @@
+# features/
+
+প্রতিটা ফিচার নিজের ফোল্ডারে (গাইডলাইন §৭.১):
+
+```
+features/<name>/
+  api.ts          ডেটাবেস কল — শুধু এখানে (getSupabase() from '@/platform/supabase')
+  hooks/          TanStack Query হুক (api.ts ব্যবহার করে)
+  components/     এই ফিচারের UI অংশ
+  screens/        পুরো স্ক্রিন — src/app/ এর রুট এগুলো import করে
+  types.ts        টাইপ ও zod স্কিমা
+  index.ts        পাবলিক API — অন্য ফিচার শুধু এটা import করবে
+```
+
+নিয়ম (ESLint দিয়ে প্রয়োগ):
+
+- অন্য ফিচারের ভেতরের ফাইল নয়, শুধু `@/features/<name>` থেকে import।
+- ফিচারের নিজের ভেতরে relative import (`./api`)।
+- `screens/` আর `components/` সরাসরি Supabase ডাকবে না।
+- কোনো লেখা সরাসরি নয় — `t('…')`; কোনো রং সরাসরি নয় — `ui/` টোকেন।

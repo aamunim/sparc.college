@@ -80,5 +80,34 @@ module.exports = defineConfig([
       ],
     },
   },
+  {
+    // core/ React Native-নির্ভর নয় (D3a) — ভবিষ্যতে ওয়েব/অ্যাডমিনেও একই কোড চলবে
+    files: ['src/core/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                'react-native',
+                'react-native-*',
+                'expo',
+                'expo-*',
+                '@expo/*',
+                '@react-native-async-storage/*',
+                '@/platform/*',
+                '@/ui',
+                '@/ui/*',
+                '@/features/*',
+              ],
+              message:
+                'core/ React Native/Expo/platform-নির্ভর হতে পারবে না — সেটা src/platform/-এ রাখুন।',
+            },
+          ],
+        },
+      ],
+    },
+  },
   prettierConfig,
 ]);
