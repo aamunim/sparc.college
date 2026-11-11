@@ -9,6 +9,7 @@ const envSchema = z.object({
   appEnv: z.enum(APP_ENVS).default('dev'),
   supabaseUrl: z.url().optional(),
   supabaseAnonKey: z.string().min(20).optional(),
+  sentryDsn: z.url().optional(),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;
@@ -17,6 +18,7 @@ export type RawEnv = {
   appEnv?: string;
   supabaseUrl?: string;
   supabaseAnonKey?: string;
+  sentryDsn?: string;
 };
 
 /** খালি স্ট্রিংকে "নেই" ধরে যাচাই করে; ভুল মান থাকলে কোন ঘরে ভুল তা জানিয়ে এরর দেয়। */

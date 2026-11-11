@@ -8,13 +8,15 @@ import { I18nextProvider } from 'react-i18next';
 
 import { useAppFonts } from '@/platform/fonts';
 import { setupI18n } from '@/platform/i18n';
+import { initSentry, wrapWithSentry } from '@/platform/sentry';
 import { loadThemeMode, ThemeProvider, type ThemeMode } from '@/ui';
 
+initSentry();
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 type Boot = { i18n: i18n; themeMode: ThemeMode };
 
-export default function RootLayout() {
+function RootLayout() {
   const [fontsLoaded, fontError] = useAppFonts();
   const [boot, setBoot] = useState<Boot | null>(null);
 
@@ -41,3 +43,5 @@ export default function RootLayout() {
     </I18nextProvider>
   );
 }
+
+export default wrapWithSentry(RootLayout);

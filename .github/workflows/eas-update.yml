@@ -1,0 +1,88 @@
+# OTA আপডেট (§১২): dev → preview চ্যানেল, main → production চ্যানেল।
+# ক্রম বাধ্যতামূলক (§২০.১২): আগে DB migration → Edge Functions → তারপর EAS Update।
+# Secret না থাকলে (এখনো সেটআপ হয়নি) কিছু না করে পরিষ্কারভাবে থামে।
+name: EAS Update
+
+on:
+  push:
+    branches: [dev, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: eas-update-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+      CHANNEL: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
+    steps:
+      - name: Check secrets
+        id: secrets
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::notice::EXPO_TOKEN নেই — EAS Update বাদ (README-এর সেটআপ দেখুন)"
+            echo "eas=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "eas=true" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ] && [ -n "$SUPABASE_DB_PASSWORD" ] && [ -n "$SUPABASE_PROJECT_REF" ]; then
+            echo "db=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Supabase secret নেই — DB/Functions deploy বাদ"
+            echo "db=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # ১) DB migration (শুধু CI দিয়ে, হাতে নয় — §১২.৫)
+      - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
+        if: steps.secrets.outputs.db == 'true'
+        with:
+          version: 3.1.0
+      - name: Push database migrations
+        if: steps.secrets.outputs.db == 'true'
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          supabase db push --include-all
+      # ২) Edge Functions
+      - name: Deploy Edge Functions
+        if: steps.secrets.outputs.db == 'true' && hashFiles('supabase/functions/*/index.ts') != ''
+        run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"
+
+      # ৩) EAS Update
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: steps.secrets.outputs.eas == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - uses: expo/expo-github-action@5273c2136bd09c2a341fe3340d3e767ce5a13015 # v9
+        if: steps.secrets.outputs.eas == 'true'
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install dependencies
+        if: steps.secrets.outputs.eas == 'true'
+        run: npm ci --no-audit --no-fund
+      - name: Publish update
+        if: steps.secrets.outputs.eas == 'true'
+        env:
+          # commit message সরাসরি স্ক্রিপ্টে বসানো হয় না (script injection এড়াতে)
+          UPDATE_MESSAGE: ${{ github.event.head_commit.message || github.sha }}
+        run: eas update --channel "$CHANNEL" --environment "$CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive
+      - name: Upload source maps to Sentry
+        if: steps.secrets.outputs.eas == 'true' && env.SENTRY_AUTH_TOKEN != ''
+        run: npx sentry-expo-upload-sourcemaps dist
