@@ -562,6 +562,7 @@ export type Database = {
           store_url: string;
         }[];
       };
+      reserve_sms_slot: { Args: { p_kind?: string; p_phone: string }; Returns: string };
       revoke_role: { Args: { p_user_role_id: string }; Returns: undefined };
       set_feature_flag: {
         Args: { p_enabled: boolean; p_institution_id?: string; p_key: string; p_reason?: string };

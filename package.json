@@ -23,7 +23,9 @@
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript > packages/core/src/types/database.ts && prettier --write packages/core/src/types/database.ts --log-level warn",
     "db:lint": "supabase db lint --schema public,private,analytics --level warning --fail-on warning",
-    "db:bench": "bash scripts/db-bench.sh"
+    "db:bench": "bash scripts/db-bench.sh",
+    "fn:test": "cd supabase/functions && deno lint && deno check */index.ts && deno test --allow-net=localhost",
+    "fn:serve": "supabase functions serve --env-file supabase/functions/.env"
   },
   "devDependencies": {
     "eslint": "^9.39.5",

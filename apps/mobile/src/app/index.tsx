@@ -1,8 +1,9 @@
-import { isLanguage, SUPPORTED_LANGUAGES, type Language } from '@sparc/core';
+import { formatBdPhone, isLanguage, SUPPORTED_LANGUAGES, type Language } from '@sparc/core';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { InstitutionSwitcher } from '@/features/access';
+import { PhoneLoginCard } from '@/features/auth-phone';
 import { DevLoginCard } from '@/features/dev-login';
 import { HomeMenu } from '@/features/home';
 import { signOut, useSession } from '@/features/session';
@@ -33,17 +34,22 @@ export default function HomeScreen() {
         <>
           <Card className="gap-2">
             <Text variant="label" tone="muted">
-              {t('access.signedInAs', { email: session.user.email ?? session.user.phone ?? '' })}
+              {t('access.signedInAs', {
+                email:
+                  session.user.email ||
+                  (session.user.phone ? formatBdPhone(`+${session.user.phone}`) : ''),
+              })}
             </Text>
             <Button label={t('access.signOut')} variant="secondary" onPress={() => signOut()} />
           </Card>
           <InstitutionSwitcher />
           <HomeMenu />
         </>
-      ) : appConfig.appEnv === 'dev' ? (
-        <DevLoginCard />
       ) : (
-        <Text tone="muted">{t('access.loginComingSoon')}</Text>
+        <>
+          <PhoneLoginCard />
+          {appConfig.appEnv === 'dev' ? <DevLoginCard /> : null}
+        </>
       )}
 
       <Preferences />

@@ -263,13 +263,14 @@ otp_expiry = 300
 [auth.sms]
 # Allow/disallow the phone provider. When false, users can't sign up or sign in with SMS.
 # To block new signups only, set enable_signup = false under [auth] instead.
-enabled = false
+# ফেজ ২.১: ফোন OTP লগইন — SMS পাঠায় send-sms Edge Function (নিচের [auth.hook.send_sms])
+enabled = true
 # If enabled, users need to confirm their phone number before signing in.
 enable_confirmations = false
 # Template for sending OTP to users
 template = "Your code is {{ .Code }}"
 # Controls the minimum amount of time that must pass before sending another sms otp.
-max_frequency = "5s"
+max_frequency = "60s"
 
 # Use pre-defined map of phone number to OTP for testing.
 # Keys are the phone number with country code and without the + prefix.
@@ -294,13 +295,23 @@ max_frequency = "5s"
 enabled = true
 uri = "pg-functions://postgres/private/custom_access_token_hook"
 
+# OTP SMS আমাদের send-sms Edge Function পাঠায় (BulkSMSBD)। নিচের secret শুধু লোকালের জন্য —
+# প্রোডাকশনে ড্যাশবোর্ড → Auth → Hooks → Send SMS-এ নতুন secret বানাতে হবে, আর সেটাই
+# Edge Function secret SEND_SMS_HOOK_SECRETS-এ বসাতে হবে।
+[auth.hook.send_sms]
+enabled = true
+uri = "http://host.docker.internal:54321/functions/v1/send-sms"
+secrets = "v1,whsec_NyNN9pJWs74S4vhHd95Pprjq2ASXS3SkZxNabHFzq30="
+
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
+# লোকাল CLI কোনো প্রোভাইডার চালু না দেখলে ফোন লগইন বন্ধ করে দেয়, যদিও Send SMS hook থাকলে
+# প্রোভাইডার কখনো ডাকা হয় না। তাই এখানে অকেজো placeholder দিয়ে চালু রাখা — Twilio ব্যবহার হয় না।
 [auth.sms.twilio]
-enabled = false
-account_sid = ""
-message_service_sid = ""
+enabled = true
+account_sid = "unused-send-sms-hook"
+message_service_sid = "unused-send-sms-hook"
 # DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
-auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
+auth_token = "unused-send-sms-hook"
 
 # Multi-factor-authentication is available to Supabase Pro plan.
 [auth.mfa]
@@ -383,6 +394,10 @@ enabled = false
 authorization_url_path = "/oauth/consent"
 # Allow dynamic client registration
 allow_dynamic_registration = false
+
+# Auth hook নিজের স্বাক্ষর দিয়ে যাচাই হয়, ইউজারের JWT থাকে না
+[functions.send-sms]
+verify_jwt = false
 
 [edge_runtime]
 enabled = true

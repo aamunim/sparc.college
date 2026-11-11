@@ -4,6 +4,7 @@ export * from './access';
 export * from './design/colors';
 export * from './env';
 export * from './i18n';
+export * from './phone';
 export * from './redact';
 export * from './registry';
 export * from './supabase';

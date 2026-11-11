@@ -1,0 +1,8 @@
+{
+  "nodeModulesDir": "none",
+  "lock": false,
+  "imports": {
+    "standardwebhooks": "npm:standardwebhooks@1.0.0",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2.119.0"
+  }
+}

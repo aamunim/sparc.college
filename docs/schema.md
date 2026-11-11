@@ -21,6 +21,7 @@
 | `app_versions` | GLOBAL | প্ল্যাটফর্মভেদে সর্বনিম্ন সমর্থিত আর সর্বশেষ ভার্সন (force update) | 20261111000300 |
 | `audit_logs` | GLOBAL | কে, কখন, কী বদলাল (before/after); append-only — বদলানো/মোছা যায় না | 20261111000400 |
 | `analytics.events` | TENANT | কার্যকলাপের ইভেন্ট; মাসভিত্তিক partition (pg_partman); ক্লায়েন্ট সরাসরি পড়তে পারে না | 20261111000400 |
+| `private.sms_log` | — (private) | কোন নম্বরে কখন SMS গেল — শুধু সীমা গোনার জন্য; নম্বর HMAC (Vault-এর `sms_log_pepper`) করে রাখা; ৭ দিন পর মোছে (pg_cron `sms-log-purge`) | 20261111000800 |
 
 ## স্ট্যান্ডার্ড কলাম (§৬.১)
 
@@ -63,6 +64,7 @@
 | `private.public_app_version_policy(platform)` | লগইনের আগে force-update যাচাই | **anon**, authenticated |
 | `private.audit_row()` | trigger: `audit_logs`-এ লেখে | কেউ না |
 | `private.track_events(events)` | ইভেন্ট ব্যাচ গ্রহণ: সদস্যপদ, ধরন, সময় যাচাই; idempotent | authenticated (wrapper: `public.track_events`) |
+| `private.reserve_sms_slot(phone, kind)` | OTP SMS-এর সীমা (১০ মিনিটে ৩, দিনে ১০) — Vault-এর pepper পড়ে, `sms_log`-এ লেখে | শুধু **service_role** (`send-sms` Edge Function; wrapper: `public.reserve_sms_slot`) |
 
 ## অনুমতি (এখন পর্যন্ত)
 

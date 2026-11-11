@@ -51,8 +51,7 @@
     "signedInAs": "Signed in as {{email}}",
     "signOut": "Log out",
     "loadFailed": "Could not load — check your connection and try again",
-    "noMembership": "You are not part of any institution yet",
-    "loginComingSoon": "Login is coming soon"
+    "noMembership": "You are not part of any institution yet"
   },
   "menu": {
     "title": "Menu",
@@ -71,10 +70,31 @@
   },
   "devLogin": {
     "title": "Developer login",
-    "hint": "Development only (seed users). Real login arrives in phase 2.",
+    "hint": "Development only (seed users).",
     "email": "Email",
     "password": "Password",
     "submit": "Log in",
     "error": "Email or password is incorrect"
+  },
+  "phoneLogin": {
+    "title": "Log in with phone",
+    "phoneHint": "Enter your mobile number. We'll send a 6-digit code by SMS.",
+    "phoneLabel": "Mobile number",
+    "phonePlaceholder": "01XXXXXXXXX",
+    "sendCode": "Send code",
+    "codeTitle": "Enter code",
+    "codeSentTo": "Code sent to {{phone}}",
+    "codeLabel": "6-digit code",
+    "codePlaceholder": "123456",
+    "verify": "Log in",
+    "resend": "Resend code",
+    "resendIn": "Resend in {{seconds}} s",
+    "changeNumber": "Change number",
+    "error": {
+      "invalidPhone": "Enter a valid Bangladeshi mobile number (starts with 01, 11 digits)",
+      "rateLimited": "Too many attempts. Please try again later.",
+      "failed": "Couldn't send the code. Check your connection and try again.",
+      "invalidCode": "The code is wrong or has expired"
+    }
   }
 }

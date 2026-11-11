@@ -2,7 +2,7 @@
 
 SaaS-ভিত্তিক মোবাইল ও ওয়েব লার্নিং ম্যানেজমেন্ট সিস্টেম (LMS)।
 
-> ফেজ ০ (সেটআপ) চলছে।
+> ফেজ ২ (লগইন ও অনবোর্ডিং) চলছে।
 
 ## রিপোর কাঠামো (monorepo, D3a)
 
@@ -52,6 +52,9 @@ npm run admin
 - `npm run typecheck` / `lint` / `format` / `test` / `check:i18n`
 - `npm run build:web` / `build:admin` — মোবাইলের ওয়েব বিল্ড / অ্যাডমিন বিল্ড
 - `npm run db:start` / `db:reset` / `db:test` / `db:types` / `db:lint` / `db:bench` — লোকাল Supabase (Docker লাগে), migration, pgTAP টেস্ট, টাইপ জেনারেশন, SQL lint, গতি পরীক্ষা
+- `npm run fn:test` / `fn:serve` — Edge Function-এর টেস্ট (Deno লাগে) / লোকালে চালানো (`supabase/functions/.env.example` কপি করে `.env`)
+
+**লোকালে ফোন লগইন:** `npm run fn:serve` চালু থাকলে অ্যাপে যেকোনো বাংলাদেশি নম্বর দিন — SMS যায় না, কোডটা `fn:serve`-এর টার্মিনালে দেখা যায় (`[mock-sms] … Your SPARC code is 123456`)।
 
 নেটিভ মডিউল থাকায় Android-এ Expo Go নয়, development build লাগবে (নিচে দেখুন)। EAS-এর সব কমান্ড `apps/mobile` ফোল্ডার থেকে চালাতে হবে।
 
@@ -90,6 +93,20 @@ EAS environment variables (Expo ড্যাশবোর্ড → Project → E
 - ফেজ ১-এ: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, `SUPABASE_PROJECT_REF`
 
 Secret না থাকলে EAS workflow-গুলো কিছু না করে পরিষ্কার নোটিশ দিয়ে থামে।
+
+**৪. ফোন লগইন (BulkSMSBD) — ফেজ ২.১**
+
+Supabase ড্যাশবোর্ডে (প্রতিটা প্রজেক্টে আলাদা):
+
+1. Authentication → Sign In / Providers → **Phone** চালু করুন। SMS provider যেকোনোটা বেছে ফাঁকা রাখুন — hook চালু থাকলে সেটা ব্যবহার হয় না। SMS OTP Expiry `300`, OTP length `6`।
+2. Authentication → Rate Limits → একই নম্বরে আবার কোড পাঠানোর ব্যবধান `60` সেকেন্ড।
+3. Authentication → Hooks → **Send SMS hook** → HTTPS → URL `https://<project-ref>.supabase.co/functions/v1/send-sms` → **Generate secret** → সেভ। secret-টা কপি করুন (চ্যাটে নয়)।
+4. Edge Functions → Secrets-এ বসান:
+   - `SEND_SMS_HOOK_SECRETS` = ধাপ ৩-এর secret (`v1,whsec_…`)
+   - `SMS_PROVIDER` = `bulksmsbd`
+   - `BULKSMSBD_API_KEY`, `BULKSMSBD_SENDER_ID` = BulkSMSBD ড্যাশবোর্ড থেকে
+
+BulkSMSBD-তে: Sender ID অনুমোদিত থাকতে হবে, আর **IP whitelisting বন্ধ** রাখতে হবে (Edge Function-এর IP স্থির নয়)। ফাংশন deploy হয় EAS Update workflow-এ (`supabase functions deploy`)। সীমা: একই নম্বরে ১০ মিনিটে ৩টা, দিনে ১০টা কোড।
 
 **Workflows**
 
