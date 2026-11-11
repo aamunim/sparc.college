@@ -1,0 +1,57 @@
+# প্রতিটা PR আর main/dev-এ push-এ মান যাচাই (গাইডলাইন §১৩, §১২.৩)।
+# Action-গুলো commit SHA-তে pin করা (§৯.৮); Dependabot এগুলো হালনাগাদ রাখে।
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, dev, 'claude/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: App checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Format
+        run: npm run format:check
+      - name: Translation keys (bn/en)
+        run: npm run check:i18n
+      - name: Unit tests
+        run: npm test -- --ci
+      - name: Web build
+        run: npx expo export --platform web --output-dir dist
+      - name: Dependency audit (production deps, high+)
+        run: npm audit --omit=dev --audit-level=high
+
+  database:
+    name: Database tests (pgTAP)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
+        with:
+          version: 3.1.0
+      - name: Start local database (migrations + seed)
+        run: supabase db start
+      - name: Run pgTAP tests
+        run: supabase test db

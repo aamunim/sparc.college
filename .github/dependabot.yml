@@ -1,0 +1,31 @@
+# নির্ভরতা হালনাগাদ (§৯.৮)। Expo/React Native-এর প্যাকেজ এখানে বাদ —
+# সেগুলো SDK-র সাথে মিলিয়ে `npx expo install --fix` দিয়ে একসাথে আপগ্রেড হয়।
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: 'expo'
+      - dependency-name: 'expo-*'
+      - dependency-name: '@expo/*'
+      - dependency-name: 'jest-expo'
+      - dependency-name: 'eslint-config-expo'
+      - dependency-name: 'react'
+      - dependency-name: 'react-dom'
+      - dependency-name: 'react-native'
+      - dependency-name: 'react-native-*'
+      - dependency-name: '@react-native-async-storage/*'
+      - dependency-name: '@types/react'
+      - dependency-name: 'typescript'
+      - dependency-name: 'nativewind'
+      - dependency-name: 'tailwindcss'
+    groups:
+      dev-tools:
+        dependency-type: development
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

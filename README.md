@@ -30,6 +30,8 @@ npx expo start
 - `npm run lint` — ESLint (মডিউল-সীমা, সরাসরি লেখা/রং, `any` নিষেধ)
 - `npm run format` / `npm run format:check` — Prettier
 - `npm run check:i18n` — bn/en অনুবাদের key মিলছে কিনা
+- `npm test` — ইউনিট টেস্ট (Jest)
+- `npm run check` — PR-এর আগে সব দ্রুত চেক একসাথে (CI-তেও এগুলোই চলে)
 - `npm run db:start` / `db:reset` / `db:test` / `db:types` — লোকাল Supabase (Docker লাগে), migration, pgTAP টেস্ট, টাইপ জেনারেশন
 - `npm run export:web` — ওয়েব বিল্ড
 

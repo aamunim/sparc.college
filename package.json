@@ -8,6 +8,7 @@
     "@expo/ui": "~58.0.27",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@supabase/supabase-js": "^2.119.0",
+    "@types/jest": "30.0.0",
     "aes-js": "^3.1.2",
     "expo": "~58.0.23",
     "expo-constants": "~58.0.15",
@@ -26,6 +27,8 @@
     "expo-system-ui": "~58.0.7",
     "expo-web-browser": "~58.0.7",
     "i18next": "^27.1.1",
+    "jest": "~30.5.2",
+    "jest-expo": "~58.0.14",
     "nativewind": "^4.2.7",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -65,7 +68,16 @@
     "db:types": "supabase gen types typescript --local > src/types/database.ts",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
-    "db:test": "supabase test db"
+    "db:test": "supabase test db",
+    "test": "jest",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run check:i18n && npm test -- --ci"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/supabase/"
+    ]
+  }
 }

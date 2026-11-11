@@ -8,7 +8,7 @@
     "scheme": "sparc",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "bundleIdentifier": "college.sparc.app"
     },
     "android": {
       "adaptiveIcon": {
