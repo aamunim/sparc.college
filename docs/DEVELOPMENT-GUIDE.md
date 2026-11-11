@@ -180,8 +180,8 @@ SPARC-এ শুরুতেই কয়েকটা **সাধারণ ই�
 ### ৫.১ ফোল্ডার (রিপোর রুটে)
 ```
 /
-  app/                       Expo Router স্ক্রিন — পাতলা; শুধু features থেকে import
   src/
+    app/                     Expo Router স্ক্রিন (Expo SDK 58-এর নিয়মে src/app) — পাতলা; শুধু features থেকে import
     core/                    supabase, i18n, query client, permissions (can), flags, settings, events, registry
     ui/                      ডিজাইন সিস্টেম (Button, Card, Input, …)
     features/
@@ -204,7 +204,7 @@ SPARC-এ শুরুতেই কয়েকটা **সাধারণ ই�
 
 ### ৫.২ স্ক্রিন কাঠামো (Expo Router)
 ```
-app/
+src/app/
   (auth)/        login, otp, signup, onboarding (ভূমিকা, প্রতিষ্ঠান কোড, সন্তান লিংক, সম্মতি)
   (app)/
     (tabs)/      learn | teach | research | library | account   ← রেজিস্ট্রি থেকে পারমিশন/ফ্ল্যাগ অনুযায়ী
