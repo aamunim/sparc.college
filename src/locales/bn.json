@@ -1,0 +1,19 @@
+{
+  "app": {
+    "tagline": "শেখা, শেখানো, গবেষণা"
+  },
+  "home": {
+    "phase": "ফেজ ০ — সেটআপ চলছে",
+    "sampleNumber": "সংখ্যা: {{value}}",
+    "sampleMoney": "টাকা: {{value}}",
+    "sampleDate": "আজ: {{value}}",
+    "arabicSample": "আরবি ফন্ট:"
+  },
+  "settings": {
+    "language": {
+      "label": "ভাষা",
+      "bn": "বাংলা",
+      "en": "English"
+    }
+  }
+}

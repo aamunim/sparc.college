@@ -1,0 +1,19 @@
+{
+  "app": {
+    "tagline": "Learn, teach, research"
+  },
+  "home": {
+    "phase": "Phase 0 — setup in progress",
+    "sampleNumber": "Number: {{value}}",
+    "sampleMoney": "Money: {{value}}",
+    "sampleDate": "Today: {{value}}",
+    "arabicSample": "Arabic font:"
+  },
+  "settings": {
+    "language": {
+      "label": "Language",
+      "bn": "বাংলা",
+      "en": "English"
+    }
+  }
+}
