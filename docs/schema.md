@@ -53,6 +53,8 @@
 | `private.ensure_institution_keeps_admin()` | constraint trigger: শেষ অ্যাডমিন সরানো আটকায় | কেউ না |
 | `private.bump_access_version()` | trigger: ভূমিকা বদলালে `profiles.access_version` বাড়ায় | কেউ না |
 | `private.custom_access_token_hook(event)` | লগইন টোকেনে membership যোগ (D5) | শুধু `supabase_auth_admin` |
+| `private.my_institution_ids()` | RLS: আমি যেসব প্রতিষ্ঠানের সদস্য — সেট একবার হিসাব (গতি, §২০.৪) | authenticated (policy থেকে) |
+| `private.institutions_with_permission(key)` | RLS: যেসব প্রতিষ্ঠানে এই পারমিশন আছে — সেট একবার হিসাব (গতি) | authenticated (policy থেকে) |
 | `private.feature_enabled(key, institution)` | ফ্ল্যাগ আর নির্ভরতা যাচাই | authenticated (wrapper: `public.enabled_features`) |
 | `private.set_feature_flag(...)` | প্ল্যাটফর্মে `platform.manage`, প্রতিষ্ঠানে `settings.manage` | authenticated |
 | `private.get_settings(institution)` / `private.set_setting(...)` | সদস্য পড়ে; `settings.manage` লেখে | authenticated |
@@ -87,3 +89,16 @@
 নতুন পারমিশন যোগ = নতুন migration-এ `permissions`-এ সারি + কোন সিস্টেম ভূমিকা পাবে তার `role_permissions` সারি। `021_role_matrix` টেস্ট নিজে থেকেই সেটা যাচাই করবে।
 
 **প্রোডাকশন নোট:** লগইন টোকেনের hook লোকালে `config.toml`-এ চালু; প্রোডাকশনে Supabase ড্যাশবোর্ড → Authentication → Hooks → Custom Access Token → `private.custom_access_token_hook` চালু করতে হবে।
+
+## RLS-এর গতির নিয়ম (§২০.৪)
+
+policy-তে প্রতি সারিতে `has_permission(..., institution_id)` বা `is_member(institution_id)` **নয়** —
+`institution_id in (select private.institutions_with_permission('...'))` বা `in (select private.my_institution_ids())` লিখুন।
+সেট একবার হিসাব হয়। ৫,০০০ সদস্যের স্কুলে অ্যাডমিনের সদস্য-তালিকা এতে ২–৬ সেকেন্ড থেকে ২–২০ ms-এ নেমেছে।
+`npm run db:bench` (CI-তেও চলে) সীমা পার হলে ফেল করে।
+
+## লোকাল seed (`supabase/seed.sql`)
+
+ডেমো স্কুল A আর B, আর ১৩ জন টেস্ট ইউজার (পাসওয়ার্ড `password123`, শুধু লোকাল): প্ল্যাটফর্ম অ্যাডমিন, সাপোর্ট,
+দুই স্কুলের অ্যাডমিন/শিক্ষক/শিক্ষার্থী, কোঅর্ডিনেটর, দুই স্কুলের শিক্ষক, দুই স্কুলের অভিভাবক, SPARC Platform-এর স্বতন্ত্র শিক্ষার্থী আর কোর্স নির্মাতা।
+"বড় স্কুল" (৫,০৫১ সদস্য, ২ লাখ ইভেন্ট) শুধু `supabase/bench/`-এ।

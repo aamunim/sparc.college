@@ -32,7 +32,7 @@ npx expo start
 - `npm run check:i18n` — bn/en অনুবাদের key মিলছে কিনা
 - `npm test` — ইউনিট টেস্ট (Jest)
 - `npm run check` — PR-এর আগে সব দ্রুত চেক একসাথে (CI-তেও এগুলোই চলে)
-- `npm run db:start` / `db:reset` / `db:test` / `db:types` — লোকাল Supabase (Docker লাগে), migration, pgTAP টেস্ট, টাইপ জেনারেশন
+- `npm run db:start` / `db:reset` / `db:test` / `db:types` / `db:lint` / `db:bench` — লোকাল Supabase (Docker লাগে), migration, pgTAP টেস্ট, টাইপ জেনারেশন, SQL lint, গতি পরীক্ষা
 - `npm run export:web` — ওয়েব বিল্ড
 
 নেটিভ মডিউল থাকায় Android-এ Expo Go নয়, development build লাগবে (ফেজ ০-এর EAS ধাপে সেটআপ হবে)।
@@ -96,3 +96,20 @@ npx eas-cli@latest build --platform android --profile development
 ```
 
 তৈরি APK ফোনে ইনস্টল করে `npx expo start` চালান। নেটিভ মডিউল থাকায় Expo Go চলবে না।
+
+## লোকাল টেস্ট ইউজার
+
+`npx supabase start` চালালে seed থেকে এই ইউজাররা তৈরি হয় (পাসওয়ার্ড সবার `password123` — শুধু লোকাল, প্রোডাকশনে seed চলে না):
+
+| ইমেইল                                       | ভূমিকা                                 |
+| ------------------------------------------- | -------------------------------------- |
+| platform.admin@sparc.test                   | প্ল্যাটফর্ম অ্যাডমিন                   |
+| support@sparc.test                          | প্ল্যাটফর্ম সাপোর্ট                    |
+| admin.a@sparc.test / admin.b@sparc.test     | স্কুল A / B অ্যাডমিন                   |
+| coordinator.a@sparc.test                    | স্কুল A কোঅর্ডিনেটর                    |
+| teacher.a@sparc.test / teacher.b@sparc.test | স্কুল A / B শিক্ষক                     |
+| student.a@sparc.test / student.b@sparc.test | স্কুল A / B শিক্ষার্থী                 |
+| teacher.dual@sparc.test                     | দুই স্কুলেরই শিক্ষক                    |
+| parent.dual@sparc.test                      | দুই স্কুলেরই অভিভাবক                   |
+| learner@sparc.test                          | SPARC Platform-এর স্বতন্ত্র শিক্ষার্থী |
+| creator@sparc.test                          | SPARC Platform-এর কোর্স নির্মাতা       |

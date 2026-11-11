@@ -1,6 +1,6 @@
 -- ভূমিকা ও পারমিশন: আসল রোলে (authenticated + JWT claims) টেস্ট (§২০.১, §২০.৩)।
 begin;
-select plan(30);
+select plan(31);
 
 -- ── টেস্টের জন্য লগইন বদলানোর হেল্পার ──
 create function pg_temp.login(p_user uuid, p_aal text default 'aal2') returns void
@@ -82,8 +82,8 @@ select is((select count(*)::int from public.user_roles), 1, 'a teacher sees only
 reset role;
 select throws_ok($$insert into public.user_roles (user_id, role_id, institution_id) values ('20000000-0000-4000-8000-000000000006', (select id from public.roles where key='platform_admin'), '10000000-0000-4000-8000-00000000000a')$$,
   '22023', 'ROLE_SCOPE_MISMATCH', 'platform role cannot be given inside a school');
-select throws_ok($$insert into public.user_roles (user_id, role_id, institution_id) values ('20000000-0000-4000-8000-000000000006', (select id from public.roles where key='teacher'), (select id from public.institutions where type='platform'))$$,
-  '22023', 'ROLE_SCOPE_MISMATCH', 'school role cannot be given in the platform institution');
+select lives_ok($$insert into public.user_roles (user_id, role_id, institution_id) values ('20000000-0000-4000-8000-000000000006', (select id from public.roles where key='student'), (select id from public.institutions where type='platform'))$$,
+  'an independent learner can be a student in the SPARC Platform institution (D4)');
 select pg_temp.login('20000000-0000-4000-8000-000000000005');
 set local role authenticated;
 select ok(public.has_permission('platform.institution.create', '10000000-0000-4000-8000-00000000000a'), 'platform admin has platform.* permissions everywhere');
@@ -98,6 +98,9 @@ select throws_ok($$select public.revoke_role((select id from public.user_roles w
 reset role;
 select throws_ok($$update public.user_roles set revoked_at = now() where user_id = '20000000-0000-4000-8000-000000000004'$$,
   '23514', 'LAST_ADMIN', 'the last admin of a school cannot be removed, even directly');
+
+select lives_ok($$delete from public.institutions where id = '10000000-0000-4000-8000-00000000000b'$$,
+  'a whole institution can still be deleted (its last admin goes with it)');
 
 -- দ্বিতীয় অ্যাডমিন থাকলে প্রথমজনকে সরানো যায়
 insert into public.user_roles (user_id, role_id, institution_id)
