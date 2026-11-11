@@ -17,7 +17,10 @@ npx expo start
 ```
 
 অন্যান্য কমান্ড:
+
 - `npm run typecheck` — TypeScript যাচাই
+- `npm run lint` — ESLint (মডিউল-সীমা, সরাসরি লেখা/রং, `any` নিষেধ)
+- `npm run format` / `npm run format:check` — Prettier
 - `npm run export:web` — ওয়েব বিল্ড
 
 নেটিভ মডিউল থাকায় Android-এ Expo Go নয়, development build লাগবে (ফেজ ০-এর EAS ধাপে সেটআপ হবে)।
