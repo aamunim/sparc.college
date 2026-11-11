@@ -68,7 +68,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:i18n": "node scripts/check-locales.js",
-    "db:types": "supabase gen types typescript --local > src/types/database.ts",
+    "db:types": "supabase gen types typescript > src/types/database.ts && prettier --write src/types/database.ts --log-level warn",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",

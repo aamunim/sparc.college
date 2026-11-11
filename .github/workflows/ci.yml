@@ -55,3 +55,15 @@ jobs:
         run: supabase db start
       - name: Run pgTAP tests
         run: supabase test db
+      - name: Lint SQL (plpgsql_check)
+        run: supabase db lint --level warning --fail-on warning
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Generated DB types are up to date
+        run: |
+          npm run db:types
+          git diff --exit-code src/types/database.ts || {
+            echo "::error::src/types/database.ts পুরনো — লোকালে 'npm run db:types' চালিয়ে commit করুন"; exit 1; }
