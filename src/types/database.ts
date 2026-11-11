@@ -23,8 +23,194 @@ export type Database = {
   };
   public: {
     Tables: {
+      app_versions: {
+        Row: {
+          latest_version: string;
+          message_bn: string | null;
+          message_en: string | null;
+          min_supported_version: string;
+          platform: string;
+          store_url: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          latest_version: string;
+          message_bn?: string | null;
+          message_en?: string | null;
+          min_supported_version: string;
+          platform: string;
+          store_url?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          latest_version?: string;
+          message_bn?: string | null;
+          message_en?: string | null;
+          min_supported_version?: string;
+          platform?: string;
+          store_url?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
+      audit_logs: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          after: Json | null;
+          before: Json | null;
+          id: number;
+          institution_id: string | null;
+          meta: NonNullable<Json>;
+          occurred_at: string;
+          record_id: string | null;
+          table_name: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          after?: Json | null;
+          before?: Json | null;
+          id?: never;
+          institution_id?: string | null;
+          meta?: NonNullable<Json>;
+          occurred_at?: string;
+          record_id?: string | null;
+          table_name?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          after?: Json | null;
+          before?: Json | null;
+          id?: never;
+          institution_id?: string | null;
+          meta?: NonNullable<Json>;
+          occurred_at?: string;
+          record_id?: string | null;
+          table_name?: string | null;
+        };
+        Relationships: [];
+      };
+      feature_flags: {
+        Row: {
+          enabled: boolean;
+          feature_key: string;
+          id: string;
+          institution_id: string | null;
+          reason: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          enabled: boolean;
+          feature_key: string;
+          id?: string;
+          institution_id?: string | null;
+          reason?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          enabled?: boolean;
+          feature_key?: string;
+          id?: string;
+          institution_id?: string | null;
+          reason?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'feature_flags_feature_key_fkey';
+            columns: ['feature_key'];
+            isOneToOne: false;
+            referencedRelation: 'features';
+            referencedColumns: ['key'];
+          },
+          {
+            foreignKeyName: 'feature_flags_institution_id_fkey';
+            columns: ['institution_id'];
+            isOneToOne: false;
+            referencedRelation: 'institutions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      features: {
+        Row: {
+          created_at: string;
+          default_enabled: boolean;
+          depends_on: string[];
+          description: string;
+          key: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          default_enabled?: boolean;
+          depends_on?: string[];
+          description: string;
+          key: string;
+        };
+        Update: {
+          created_at?: string;
+          default_enabled?: boolean;
+          depends_on?: string[];
+          description?: string;
+          key?: string;
+        };
+        Relationships: [];
+      };
+      institution_settings: {
+        Row: {
+          institution_id: string;
+          key: string;
+          updated_at: string;
+          updated_by: string | null;
+          value: NonNullable<Json>;
+        };
+        ComputedFields: never;
+        Insert: {
+          institution_id: string;
+          key: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          value: NonNullable<Json>;
+        };
+        Update: {
+          institution_id?: string;
+          key?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          value?: NonNullable<Json>;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'institution_settings_institution_id_fkey';
+            columns: ['institution_id'];
+            isOneToOne: false;
+            referencedRelation: 'institutions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'institution_settings_key_fkey';
+            columns: ['key'];
+            isOneToOne: false;
+            referencedRelation: 'setting_definitions';
+            referencedColumns: ['key'];
+          },
+        ];
+      };
       institutions: {
         Row: {
+          config_version: number;
           created_at: string;
           created_by: string | null;
           deleted_at: string | null;
@@ -40,6 +226,7 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
+          config_version?: number;
           created_at?: string;
           created_by?: string | null;
           deleted_at?: string | null;
@@ -54,6 +241,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          config_version?: number;
           created_at?: string;
           created_by?: string | null;
           deleted_at?: string | null;
@@ -237,6 +425,34 @@ export type Database = {
           },
         ];
       };
+      setting_definitions: {
+        Row: {
+          created_at: string;
+          default_value: NonNullable<Json>;
+          description: string;
+          json_schema: NonNullable<Json>;
+          key: string;
+          version: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          default_value: NonNullable<Json>;
+          description: string;
+          json_schema: NonNullable<Json>;
+          key: string;
+          version?: number;
+        };
+        Update: {
+          created_at?: string;
+          default_value?: NonNullable<Json>;
+          description?: string;
+          json_schema?: NonNullable<Json>;
+          key?: string;
+          version?: number;
+        };
+        Relationships: [];
+      };
       user_roles: {
         Row: {
           created_at: string;
@@ -322,6 +538,8 @@ export type Database = {
         };
         Returns: string;
       };
+      enabled_features: { Args: { p_institution_id?: string }; Returns: string[] };
+      get_settings: { Args: { p_institution_id: string }; Returns: Json };
       has_permission: {
         Args: { p_institution_id: string; p_permission: string };
         Returns: boolean;
@@ -334,7 +552,26 @@ export type Database = {
           role_keys: string[];
         }[];
       };
+      public_app_version_policy: {
+        Args: { p_platform: string };
+        Returns: {
+          latest_version: string;
+          message_bn: string;
+          message_en: string;
+          min_supported_version: string;
+          store_url: string;
+        }[];
+      };
       revoke_role: { Args: { p_user_role_id: string }; Returns: undefined };
+      set_feature_flag: {
+        Args: { p_enabled: boolean; p_institution_id?: string; p_key: string; p_reason?: string };
+        Returns: undefined;
+      };
+      set_setting: {
+        Args: { p_institution_id: string; p_key: string; p_value: Json };
+        Returns: undefined;
+      };
+      track_events: { Args: { p_events: Json }; Returns: number };
     };
     Enums: {
       [_ in never]: never;

@@ -14,6 +14,13 @@
 | `roles` | GLOBAL | সিস্টেম ভূমিকা (`institution_id` null) + প্রতিষ্ঠানের নিজস্ব ভূমিকা; `scope` platform/institution; `flags` | 20261111000200 |
 | `role_permissions` | GLOBAL | ভূমিকা → পারমিশন | 20261111000200 |
 | `user_roles` | TENANT | কে, কোন প্রতিষ্ঠানে, কোন ভূমিকায়, কতদিন (`valid_from/until`, `revoked_at`) | 20261111000200 |
+| `features` | GLOBAL | ফিচারের রেজিস্ট্রি: ডিফল্ট অবস্থা, নির্ভরতা (`depends_on`) | 20261111000300 |
+| `feature_flags` | GLOBAL | চালু/বন্ধ: সারা প্ল্যাটফর্মে (`institution_id` null; বন্ধ = kill switch) বা এক প্রতিষ্ঠানে | 20261111000300 |
+| `setting_definitions` | GLOBAL | সেটিংয়ের key, JSON Schema, ডিফল্ট | 20261111000300 |
+| `institution_settings` | TENANT | প্রতিষ্ঠানের নিজের সেটিং (ডিফল্ট থেকে আলাদা হলে); schema দিয়ে যাচাই | 20261111000300 |
+| `app_versions` | GLOBAL | প্ল্যাটফর্মভেদে সর্বনিম্ন সমর্থিত আর সর্বশেষ ভার্সন (force update) | 20261111000300 |
+| `audit_logs` | GLOBAL | কে, কখন, কী বদলাল (before/after); append-only — বদলানো/মোছা যায় না | 20261111000400 |
+| `analytics.events` | TENANT | কার্যকলাপের ইভেন্ট; মাসভিত্তিক partition (pg_partman); ক্লায়েন্ট সরাসরি পড়তে পারে না | 20261111000400 |
 
 ## স্ট্যান্ডার্ড কলাম (§৬.১)
 
@@ -25,7 +32,11 @@
 |---|---|
 | `public` | টেবিল আর ক্লায়েন্টের ডাকার মতো ফাংশন — এখানে কোনো `SECURITY DEFINER` নয় |
 | `private` | RLS হেল্পার, trigger ফাংশন — anon কিছু চালাতে পারে না; প্রতিটা ফাংশনে `search_path` নির্দিষ্ট |
+| `analytics` | ইভেন্ট আর তার partition — API-তে এক্সপোজড নয়; লেখা শুধু `public.track_events`, পড়া ভবিষ্যতে রিপোর্টের RPC দিয়ে |
 | `extensions` | pg_trgm, ltree, pg_jsonschema, pgcrypto |
+| `partman` | pg_partman (events-এর মাসিক partition); রক্ষণাবেক্ষণ pg_cron-এ প্রতিদিন ০৩:১৭ UTC |
+
+**anon (লগইন ছাড়া) নিয়ম:** কোনো টেবিলে অনুমতি নেই। শুধু নাম `public_` দিয়ে শুরু হওয়া ফাংশন চালাতে পারে (যেমন `public_app_version_policy`)। `001_schema_guards` এটা যাচাই করে।
 
 ## SECURITY DEFINER ফাংশনের তালিকা (§২০.১)
 
@@ -42,6 +53,14 @@
 | `private.ensure_institution_keeps_admin()` | constraint trigger: শেষ অ্যাডমিন সরানো আটকায় | কেউ না |
 | `private.bump_access_version()` | trigger: ভূমিকা বদলালে `profiles.access_version` বাড়ায় | কেউ না |
 | `private.custom_access_token_hook(event)` | লগইন টোকেনে membership যোগ (D5) | শুধু `supabase_auth_admin` |
+| `private.feature_enabled(key, institution)` | ফ্ল্যাগ আর নির্ভরতা যাচাই | authenticated (wrapper: `public.enabled_features`) |
+| `private.set_feature_flag(...)` | প্ল্যাটফর্মে `platform.manage`, প্রতিষ্ঠানে `settings.manage` | authenticated |
+| `private.get_settings(institution)` / `private.set_setting(...)` | সদস্য পড়ে; `settings.manage` লেখে | authenticated |
+| `private.validate_institution_setting()` | trigger: JSON Schema যাচাই | কেউ না |
+| `private.bump_config_version(institution)` | সেটিং/ফ্ল্যাগ বদলালে ক্যাশ বাতিলের সংকেত | কেউ না (ভেতর থেকে) |
+| `private.public_app_version_policy(platform)` | লগইনের আগে force-update যাচাই | **anon**, authenticated |
+| `private.audit_row()` | trigger: `audit_logs`-এ লেখে | কেউ না |
+| `private.track_events(events)` | ইভেন্ট ব্যাচ গ্রহণ: সদস্যপদ, ধরন, সময় যাচাই; idempotent | authenticated (wrapper: `public.track_events`) |
 
 ## অনুমতি (এখন পর্যন্ত)
 

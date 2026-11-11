@@ -1,7 +1,7 @@
 -- কাঠামোর পাহারাদার (§২০.১): ক্যাটালগ পড়ে সব টেবিল/ফাংশন নিজে যাচাই করে।
 -- নতুন টেবিল যোগ করলে এই টেস্টের জন্য কিছু লিখতে হয় না — নিয়ম না মানলে নিজেই ফেল করবে।
 begin;
-select plan(7);
+select plan(8);
 
 -- ১) public-এর প্রতিটা টেবিলে RLS চালু
 select is(
@@ -62,13 +62,23 @@ select is(
   'every private function pins search_path'
 );
 
--- ৭) anon কোনো private ফাংশন চালাতে পারে না
+-- ৭) anon কোনো private ফাংশন চালাতে পারে না — শুধু নাম 'public_' দিয়ে শুরু হলে (লগইনের আগের ইচ্ছাকৃত পাবলিক পথ)
 select is(
   (select array_agg(p.proname::text order by p.proname)
      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-    where n.nspname = 'private' and has_function_privilege('anon', p.oid, 'execute')),
+    where n.nspname = 'private' and p.proname not like 'public\_%'
+      and has_function_privilege('anon', p.oid, 'execute')),
   null,
-  'anon cannot execute any private function'
+  'anon cannot execute any private function except public_* ones'
+);
+
+-- ৮) analytics schema (ইভেন্ট, partition) ক্লায়েন্টের কাছে সরাসরি খোলা নয়
+select is(
+  (select array_agg(distinct table_name::text order by table_name::text)
+     from information_schema.role_table_grants
+    where table_schema = 'analytics' and grantee in ('anon', 'authenticated', 'PUBLIC')),
+  null,
+  'clients have no direct privileges on analytics tables or partitions'
 );
 
 select * from finish();
