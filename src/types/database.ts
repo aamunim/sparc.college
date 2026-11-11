@@ -69,8 +69,34 @@ export type Database = {
         };
         Relationships: [];
       };
+      permissions: {
+        Row: {
+          created_at: string;
+          description: string;
+          is_sensitive: boolean;
+          key: string;
+          module: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          description: string;
+          is_sensitive?: boolean;
+          key: string;
+          module: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          is_sensitive?: boolean;
+          key?: string;
+          module?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
+          access_version: number;
           avatar_path: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -86,6 +112,7 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
+          access_version?: number;
           avatar_path?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -100,6 +127,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          access_version?: number;
           avatar_path?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -115,12 +143,198 @@ export type Database = {
         };
         Relationships: [];
       };
+      role_permissions: {
+        Row: {
+          created_at: string;
+          permission_key: string;
+          role_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          permission_key: string;
+          role_id: string;
+        };
+        Update: {
+          created_at?: string;
+          permission_key?: string;
+          role_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'role_permissions_permission_key_fkey';
+            columns: ['permission_key'];
+            isOneToOne: false;
+            referencedRelation: 'permissions';
+            referencedColumns: ['key'];
+          },
+          {
+            foreignKeyName: 'role_permissions_role_id_fkey';
+            columns: ['role_id'];
+            isOneToOne: false;
+            referencedRelation: 'roles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      roles: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          flags: NonNullable<Json>;
+          id: string;
+          institution_id: string | null;
+          is_system: boolean;
+          key: string;
+          meta: NonNullable<Json>;
+          name_bn: string;
+          name_en: string;
+          scope: string;
+          sort_order: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          flags?: NonNullable<Json>;
+          id?: string;
+          institution_id?: string | null;
+          is_system?: boolean;
+          key: string;
+          meta?: NonNullable<Json>;
+          name_bn: string;
+          name_en: string;
+          scope: string;
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          flags?: NonNullable<Json>;
+          id?: string;
+          institution_id?: string | null;
+          is_system?: boolean;
+          key?: string;
+          meta?: NonNullable<Json>;
+          name_bn?: string;
+          name_en?: string;
+          scope?: string;
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'roles_institution_id_fkey';
+            columns: ['institution_id'];
+            isOneToOne: false;
+            referencedRelation: 'institutions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      user_roles: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          group_id: string | null;
+          id: string;
+          institution_id: string;
+          meta: NonNullable<Json>;
+          revoked_at: string | null;
+          revoked_by: string | null;
+          role_id: string;
+          updated_at: string;
+          user_id: string;
+          valid_from: string;
+          valid_until: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          group_id?: string | null;
+          id?: string;
+          institution_id: string;
+          meta?: NonNullable<Json>;
+          revoked_at?: string | null;
+          revoked_by?: string | null;
+          role_id: string;
+          updated_at?: string;
+          user_id: string;
+          valid_from?: string;
+          valid_until?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          group_id?: string | null;
+          id?: string;
+          institution_id?: string;
+          meta?: NonNullable<Json>;
+          revoked_at?: string | null;
+          revoked_by?: string | null;
+          role_id?: string;
+          updated_at?: string;
+          user_id?: string;
+          valid_from?: string;
+          valid_until?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_roles_institution_id_fkey';
+            columns: ['institution_id'];
+            isOneToOne: false;
+            referencedRelation: 'institutions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user_roles_role_id_fkey';
+            columns: ['role_id'];
+            isOneToOne: false;
+            referencedRelation: 'roles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user_roles_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      assign_role: {
+        Args: {
+          p_institution_id: string;
+          p_role_key: string;
+          p_user_id: string;
+          p_valid_until?: string;
+        };
+        Returns: string;
+      };
+      has_permission: {
+        Args: { p_institution_id: string; p_permission: string };
+        Returns: boolean;
+      };
+      my_access: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          institution_id: string;
+          permissions: string[];
+          role_keys: string[];
+        }[];
+      };
+      revoke_role: { Args: { p_user_role_id: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;
