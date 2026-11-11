@@ -3,14 +3,6 @@
     "tagline": "Learn, teach, research"
   },
   "home": {
-    "phase": "Phase 0 — setup in progress",
-    "sampleNumber": "Number: {{value}}",
-    "sampleMoney": "Money: {{value}}",
-    "sampleDate": "Today: {{value}}",
-    "arabicSample": "Arabic font:",
-    "formatTitle": "Formatting",
-    "buttonsTitle": "Buttons",
-    "sampleButton": "Submit",
     "backend": {
       "title": "Backend",
       "configured": "Supabase is configured ({{env}})",
@@ -50,5 +42,39 @@
       "none": "You have no role in any institution",
       "loadFailed": "Could not load your access — please try again"
     }
+  },
+  "common": {
+    "loading": "Loading…"
+  },
+  "access": {
+    "institution": "Institution",
+    "signedInAs": "Signed in as {{email}}",
+    "signOut": "Log out",
+    "loadFailed": "Could not load — check your connection and try again",
+    "noMembership": "You are not part of any institution yet",
+    "loginComingSoon": "Login is coming soon"
+  },
+  "menu": {
+    "title": "Menu",
+    "note": "Showing the menu for your roles (screens arrive in later phases)",
+    "learn": "Learn",
+    "members": "Members",
+    "roles": "Assign roles",
+    "settings": "Settings",
+    "audit": "Audit log",
+    "platform": "Platform admin"
+  },
+  "update": {
+    "title": "Update required",
+    "body": "This version is no longer supported. Please update the app to continue.",
+    "button": "Update"
+  },
+  "devLogin": {
+    "title": "Developer login",
+    "hint": "Development only (seed users). Real login arrives in phase 2.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Log in",
+    "error": "Email or password is incorrect"
   }
 }

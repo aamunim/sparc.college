@@ -6,8 +6,11 @@ import type { i18n } from 'i18next';
 import { useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
+import { UpdateRequiredScreen, useUpdateStatus } from '@/features/app-update';
+import { SessionProvider } from '@/features/session';
 import { useAppFonts } from '@/platform/fonts';
 import { setupI18n } from '@/platform/i18n';
+import { QueryProvider } from '@/platform/query';
 import { initSentry, wrapWithSentry } from '@/platform/sentry';
 import { loadThemeMode, ThemeProvider, type ThemeMode } from '@/ui';
 
@@ -15,6 +18,13 @@ initSentry();
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 type Boot = { i18n: i18n; themeMode: ThemeMode };
+
+/** পুরনো অ্যাপ হলে বাকি অ্যাপের বদলে "আপডেট করুন" স্ক্রিন (§১২.৫) */
+function AppGate() {
+  const { status, policy } = useUpdateStatus();
+  if (status === 'required') return <UpdateRequiredScreen policy={policy} />;
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
 
 function RootLayout() {
   const [fontsLoaded, fontError] = useAppFonts();
@@ -37,9 +47,13 @@ function RootLayout() {
 
   return (
     <I18nextProvider i18n={boot.i18n}>
-      <ThemeProvider initialMode={boot.themeMode}>
-        <Stack screenOptions={{ headerShown: false }} />
-      </ThemeProvider>
+      <QueryProvider>
+        <SessionProvider>
+          <ThemeProvider initialMode={boot.themeMode}>
+            <AppGate />
+          </ThemeProvider>
+        </SessionProvider>
+      </QueryProvider>
     </I18nextProvider>
   );
 }
