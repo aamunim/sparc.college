@@ -62,13 +62,15 @@ jobs:
         if: steps.secrets.outputs.db == 'true'
         working-directory: .
         run: |
+          # CLI 3: db push লোকাল ডেটাবেসে যায় যদি --remote না দেওয়া হয়; হোস্টেড পরিবর্তনে --yes লাগে
           supabase link --project-ref "$SUPABASE_PROJECT_REF"
-          supabase db push --include-all
+          supabase db push --remote --include-all --yes
       # ২) Edge Functions
       - name: Deploy Edge Functions
         if: steps.secrets.outputs.db == 'true' && hashFiles('supabase/functions/*/index.ts') != ''
         working-directory: .
-        run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"
+        # --use-api: Docker ছাড়া সার্ভারে bundle; verify_jwt আসে config.toml থেকে
+        run: supabase functions deploy --remote="$SUPABASE_PROJECT_REF" --use-api --yes
 
       # ৩) EAS Update
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
