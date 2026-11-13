@@ -30,3 +30,11 @@
 9. ভুল মডেল/দাম দিয়ে খরচ হিসাব হলো।
 10. বিল্ডে Firebase কনফিগ না থাকায় push চুপচাপ ব্যর্থ হলো।
 11. secret commit হয়ে গেল।
+
+## এই প্রজেক্টে শেখা (চলমান)
+
+- **Supabase CLI 3:** `db push` ডিফল্টে লোকাল ডেটাবেসে যায় — হোস্টেডে `--remote --yes` লাগে; `functions deploy`-এ `--project-ref` নেই, `--remote=<ref>`। (২০২৬-১১-১২, প্রথম deploy ব্যর্থ)
+- **Edge Function import:** হোস্টেড bundler শুধু ফাংশনের নিজের ফোল্ডারের `deno.json` পড়ে (`supabase/functions/<name>/deno.json`); উপরের ফোল্ডারেরটা নয়।
+- **Auth hook-এর ভুল ফেরত:** HTTP 200 + `{error:{http_code,message}}` দিলে ইউজার সেই কোড পায়; অন্য HTTP status দিলে অস্পষ্ট 500।
+- **লোকাল CLI-তে SMS hook:** কোনো SMS প্রোভাইডার চালু না দেখলে ফোন লগইন বন্ধ করে দেয় — config.toml-এ অকেজো Twilio placeholder রাখা হয়েছে।
+- **BulkSMSBD:** POST `api_key`, `type=text`, `number=8801…`, `senderid`, `message` → সফলে `response_code` 202 — ২০২৬-১১-১৩ আসল SMS পাঠিয়ে নিশ্চিত।
