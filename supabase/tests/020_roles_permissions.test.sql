@@ -2,6 +2,12 @@
 begin;
 select plan(31);
 
+-- D19-এর পর "প্রতিষ্ঠান অ্যাডমিন" ভূমিকা নেই; প্রতিষ্ঠানভিত্তিক নিয়ম যাচাইয়ের জন্য শুধু টেস্টে একই অনুমতির ভূমিকা
+insert into public.roles (key, scope, name_bn, name_en, is_system) values ('test_admin', 'institution', 'টেস্ট অ্যাডমিন', 'Test admin', true);
+insert into public.role_permissions (role_id, permission_key)
+select r.id, p from public.roles r, unnest(array['institution.read', 'institution.manage', 'member.read', 'member.manage', 'role.assign', 'role.manage', 'settings.manage', 'audit.read']) p
+ where r.key = 'test_admin';
+
 -- ── টেস্টের জন্য লগইন বদলানোর হেল্পার ──
 create function pg_temp.login(p_user uuid, p_aal text default 'aal2') returns void
 language sql as $$
@@ -26,10 +32,10 @@ insert into auth.users (id, email) values
 insert into public.user_roles (user_id, role_id, institution_id)
 select u, (select id from public.roles where key = k and institution_id is null), i
   from (values
-    ('20000000-0000-4000-8000-000000000001'::uuid, 'institution_admin', '10000000-0000-4000-8000-00000000000a'::uuid),
+    ('20000000-0000-4000-8000-000000000001'::uuid, 'test_admin', '10000000-0000-4000-8000-00000000000a'::uuid),
     ('20000000-0000-4000-8000-000000000002', 'teacher', '10000000-0000-4000-8000-00000000000a'),
     ('20000000-0000-4000-8000-000000000003', 'student', '10000000-0000-4000-8000-00000000000a'),
-    ('20000000-0000-4000-8000-000000000004', 'institution_admin', '10000000-0000-4000-8000-00000000000b'),
+    ('20000000-0000-4000-8000-000000000004', 'test_admin', '10000000-0000-4000-8000-00000000000b'),
     ('20000000-0000-4000-8000-000000000005', 'platform_admin', (select id from public.institutions where type = 'platform'))
   ) as t(u, k, i);
 
@@ -68,7 +74,7 @@ select throws_ok($$select public.assign_role('20000000-0000-4000-8000-0000000000
   '42501', 'ROLE_EXCEEDS_OWN_PERMISSIONS', 'admin A cannot hand out the platform admin role');
 select throws_ok($$select public.assign_role('20000000-0000-4000-8000-000000000006', 'no_such_role', '10000000-0000-4000-8000-00000000000a')$$,
   'P0002', 'ROLE_NOT_FOUND', 'unknown role is rejected');
-select throws_ok($$insert into public.user_roles (user_id, role_id, institution_id) values ('20000000-0000-4000-8000-000000000006', (select id from public.roles where key='institution_admin'), '10000000-0000-4000-8000-00000000000a')$$,
+select throws_ok($$insert into public.user_roles (user_id, role_id, institution_id) values ('20000000-0000-4000-8000-000000000006', (select id from public.roles where key='test_admin'), '10000000-0000-4000-8000-00000000000a')$$,
   '42501', null, 'direct insert into user_roles is not allowed');
 
 reset role;
@@ -86,7 +92,7 @@ select lives_ok($$insert into public.user_roles (user_id, role_id, institution_i
   'an independent learner can be a student in the SPARC Platform institution (D4)');
 select pg_temp.login('20000000-0000-4000-8000-000000000005');
 set local role authenticated;
-select ok(public.has_permission('platform.institution.create', '10000000-0000-4000-8000-00000000000a'), 'platform admin has platform.* permissions everywhere');
+select ok(public.has_permission('platform.manage', '10000000-0000-4000-8000-00000000000a'), 'platform admin has platform.* permissions everywhere');
 select ok(not public.has_permission('member.read', '10000000-0000-4000-8000-00000000000a'), 'platform admin has no school data permissions inside a school');
 
 -- ── ৫) শেষ অ্যাডমিন আর নিজের অ্যাডমিন ──
@@ -104,7 +110,7 @@ select lives_ok($$delete from public.institutions where id = '10000000-0000-4000
 
 -- দ্বিতীয় অ্যাডমিন থাকলে প্রথমজনকে সরানো যায়
 insert into public.user_roles (user_id, role_id, institution_id)
-values ('20000000-0000-4000-8000-000000000007', (select id from public.roles where key = 'institution_admin'), '10000000-0000-4000-8000-00000000000a');
+values ('20000000-0000-4000-8000-000000000007', (select id from public.roles where key = 'test_admin'), '10000000-0000-4000-8000-00000000000a');
 select pg_temp.login('20000000-0000-4000-8000-000000000007');
 set local role authenticated;
 select lives_ok($$select public.revoke_role((select id from public.user_roles where user_id='20000000-0000-4000-8000-000000000001' and revoked_at is null))$$,

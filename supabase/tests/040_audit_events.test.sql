@@ -2,6 +2,12 @@
 begin;
 select plan(14);
 
+-- D19-এর পর "প্রতিষ্ঠান অ্যাডমিন" ভূমিকা নেই; প্রতিষ্ঠানভিত্তিক নিয়ম যাচাইয়ের জন্য শুধু টেস্টে একই অনুমতির ভূমিকা
+insert into public.roles (key, scope, name_bn, name_en, is_system) values ('test_admin', 'institution', 'টেস্ট অ্যাডমিন', 'Test admin', true);
+insert into public.role_permissions (role_id, permission_key)
+select r.id, p from public.roles r, unnest(array['institution.read', 'institution.manage', 'member.read', 'member.manage', 'role.assign', 'role.manage', 'settings.manage', 'audit.read']) p
+ where r.key = 'test_admin';
+
 create function pg_temp.login(p_user uuid, p_aal text default 'aal2') returns void
 language sql as $$
   select set_config('request.jwt.claims',
@@ -16,9 +22,9 @@ insert into auth.users (id, email) values
   ('70000000-0000-4000-8000-000000000002', 'aa-student@x.test'),
   ('70000000-0000-4000-8000-000000000003', 'ab-admin@x.test');
 insert into public.user_roles (user_id, role_id, institution_id) values
-  ('70000000-0000-4000-8000-000000000001', (select id from public.roles where key = 'institution_admin'), '60000000-0000-4000-8000-00000000000a'),
+  ('70000000-0000-4000-8000-000000000001', (select id from public.roles where key = 'test_admin'), '60000000-0000-4000-8000-00000000000a'),
   ('70000000-0000-4000-8000-000000000002', (select id from public.roles where key = 'student'), '60000000-0000-4000-8000-00000000000a'),
-  ('70000000-0000-4000-8000-000000000003', (select id from public.roles where key = 'institution_admin'), '60000000-0000-4000-8000-00000000000b');
+  ('70000000-0000-4000-8000-000000000003', (select id from public.roles where key = 'test_admin'), '60000000-0000-4000-8000-00000000000b');
 
 -- ── অডিট ──
 select ok(exists (select 1 from public.audit_logs where action = 'user_roles.insert'
@@ -27,7 +33,7 @@ select ok(exists (select 1 from public.audit_logs where action = 'user_roles.ins
 
 select pg_temp.login('70000000-0000-4000-8000-000000000001');
 set local role authenticated;
-select lives_ok($$select public.assign_role('70000000-0000-4000-8000-000000000002', 'coordinator', '60000000-0000-4000-8000-00000000000a')$$,
+select lives_ok($$select public.assign_role('70000000-0000-4000-8000-000000000002', 'teacher', '60000000-0000-4000-8000-00000000000a')$$,
   'admin assigns a role');
 reset role;
 select is((select actor_id::text from public.audit_logs where action = 'user_roles.insert' order by id desc limit 1),

@@ -1,4 +1,4 @@
-export { InstitutionSwitcher } from './components/InstitutionSwitcher';
+export { MyRoles } from './components/MyRoles';
 export {
   useActiveInstitution,
   useCan,

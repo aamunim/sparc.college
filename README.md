@@ -126,15 +126,13 @@ npx eas-cli@latest build --platform android --profile development
 
 `npx supabase start` চালালে seed থেকে এই ইউজাররা তৈরি হয় (মোবাইল অ্যাপ আর অ্যাডমিন প্যানেল দুটোতেই লগইন করা যায়) (পাসওয়ার্ড সবার `password123` — শুধু লোকাল, প্রোডাকশনে seed চলে না):
 
-| ইমেইল                                       | ভূমিকা                                 |
-| ------------------------------------------- | -------------------------------------- |
-| platform.admin@sparc.test                   | প্ল্যাটফর্ম অ্যাডমিন                   |
-| support@sparc.test                          | প্ল্যাটফর্ম সাপোর্ট                    |
-| admin.a@sparc.test / admin.b@sparc.test     | স্কুল A / B অ্যাডমিন                   |
-| coordinator.a@sparc.test                    | স্কুল A কোঅর্ডিনেটর                    |
-| teacher.a@sparc.test / teacher.b@sparc.test | স্কুল A / B শিক্ষক                     |
-| student.a@sparc.test / student.b@sparc.test | স্কুল A / B শিক্ষার্থী                 |
-| teacher.dual@sparc.test                     | দুই স্কুলেরই শিক্ষক                    |
-| parent.dual@sparc.test                      | দুই স্কুলেরই অভিভাবক                   |
-| learner@sparc.test                          | SPARC Platform-এর স্বতন্ত্র শিক্ষার্থী |
-| creator@sparc.test                          | SPARC Platform-এর কোর্স নির্মাতা       |
+| ইমেইল                     | ভূমিকা               |
+| ------------------------- | -------------------- |
+| platform.admin@sparc.test | প্ল্যাটফর্ম অ্যাডমিন |
+| support@sparc.test        | সাপোর্ট              |
+| instructor@sparc.test     | ইন্সট্রাক্টর         |
+| teacher@sparc.test        | শিক্ষক               |
+| student@sparc.test        | শিক্ষার্থী           |
+| student2@sparc.test       | আরেক শিক্ষার্থী      |
+| parent@sparc.test         | অভিভাবক              |
+| teacher.parent@sparc.test | শিক্ষক ও অভিভাবক     |

@@ -8,7 +8,7 @@
 
 | টেবিল | ধরন | কী রাখে | migration |
 |---|---|---|---|
-| `institutions` | GLOBAL | প্রতিষ্ঠান (টেন্যান্ট)। `type='platform'` সারি একটাই: SPARC Platform | 20261111000100 |
+| `institutions` | GLOBAL | প্রতিষ্ঠান — D22: সারি একটাই, SPARC (`type='platform'`); নতুন সারি ট্রিগারে আটকানো | 20261111000100 |
 | `profiles` | GLOBAL | প্রতি auth ইউজারের প্রোফাইল (একজন মানুষ, অনেক প্রতিষ্ঠান); `access_version` | 20261111000100, …0200 |
 | `permissions` | GLOBAL | পারমিশনের রেজিস্ট্রি (`is_sensitive` → MFA লাগে) | 20261111000200 |
 | `roles` | GLOBAL | সিস্টেম ভূমিকা (`institution_id` null) + প্রতিষ্ঠানের নিজস্ব ভূমিকা; `scope` platform/institution; `flags` | 20261111000200 |
@@ -70,7 +70,7 @@
 
 | টেবিল | authenticated | anon |
 |---|---|---|
-| `institutions` | SPARC Platform সারি আর নিজের প্রতিষ্ঠানগুলো পড়া | কিছু না |
+| `institutions` | SPARC-এর সারি পড়া (D22: সারি একটাই; নতুন সারি ট্রিগারে আটকানো) | কিছু না |
 | `profiles` | নিজেরটা পড়া; যেখানে `member.read` আছে সেখানকার সদস্যদের পড়া; নিজের নাম/ছবি/ভাষা বদলানো (ফোন/ইমেইল নয়) | কিছু না |
 | `permissions` | পড়া | কিছু না |
 | `roles`, `role_permissions` | সিস্টেম ভূমিকা আর নিজের প্রতিষ্ঠানের ভূমিকা পড়া | কিছু না |
@@ -80,14 +80,14 @@
 
 | ভূমিকা | scope | পারমিশন |
 |---|---|---|
-| platform_admin | platform | সব institution.\*, member.\*, role.\*, settings.manage, audit.read, platform.manage, platform.institution.create |
+| platform_admin | platform | সব institution.\*, member.\*, role.\*, settings.manage, audit.read, platform.manage |
 | platform_support | platform | institution.read, member.read, audit.read |
 | sparc_representative | platform | institution.read |
-| institution_admin | institution | institution.read/manage, member.read/manage, role.assign/manage, settings.manage, audit.read |
-| coordinator | institution | institution.read, member.read |
-| teacher, course_creator, student, parent, researcher | institution | institution.read (বাকিগুলো পরের ফেজে যার যার মডিউলের সাথে) |
+| teacher, instructor, student, parent, researcher | institution (SPARC) | institution.read (বাকিগুলো পরের ফেজে যার যার মডিউলের সাথে) |
 
-নিয়ম: `platform.*` পারমিশন সব প্রতিষ্ঠানে প্রযোজ্য, বাকিগুলো শুধু যে প্রতিষ্ঠানে ভূমিকা আছে সেখানে। sensitive: role.assign, role.manage, platform.manage, platform.institution.create।
+D22 (migration `…0900`): `institution_admin` আর `coordinator` মুছে ফেলা হয়েছে; `course_creator` → `instructor`; `platform.institution.create` পারমিশন বাদ। টেস্টে প্রতিষ্ঠানভিত্তিক নিয়ম যাচাইয়ের জন্য শুধু টেস্টের ভেতরে `test_admin` ভূমিকা বানানো হয়।
+
+নিয়ম: `platform.*` পারমিশন সব প্রতিষ্ঠানে প্রযোজ্য, বাকিগুলো শুধু যে প্রতিষ্ঠানে ভূমিকা আছে সেখানে। sensitive: role.assign, role.manage, platform.manage।
 নতুন পারমিশন যোগ = নতুন migration-এ `permissions`-এ সারি + কোন সিস্টেম ভূমিকা পাবে তার `role_permissions` সারি। `021_role_matrix` টেস্ট নিজে থেকেই সেটা যাচাই করবে।
 
 **প্রোডাকশন নোট:** লগইন টোকেনের hook লোকালে `config.toml`-এ চালু; প্রোডাকশনে Supabase ড্যাশবোর্ড → Authentication → Hooks → Custom Access Token → `private.custom_access_token_hook` চালু করতে হবে।
@@ -96,11 +96,11 @@
 
 policy-তে প্রতি সারিতে `has_permission(..., institution_id)` বা `is_member(institution_id)` **নয়** —
 `institution_id in (select private.institutions_with_permission('...'))` বা `in (select private.my_institution_ids())` লিখুন।
-সেট একবার হিসাব হয়। ৫,০০০ সদস্যের স্কুলে অ্যাডমিনের সদস্য-তালিকা এতে ২–৬ সেকেন্ড থেকে ২–২০ ms-এ নেমেছে।
+সেট একবার হিসাব হয়। ৫,০০০ সদস্যের প্রতিষ্ঠানে অ্যাডমিনের সদস্য-তালিকা এতে ২–৬ সেকেন্ড থেকে ২–২০ ms-এ নেমেছে।
 `npm run db:bench` (CI-তেও চলে) সীমা পার হলে ফেল করে।
 
 ## লোকাল seed (`supabase/seed.sql`)
 
-ডেমো স্কুল A আর B, আর ১৩ জন টেস্ট ইউজার (পাসওয়ার্ড `password123`, শুধু লোকাল): প্ল্যাটফর্ম অ্যাডমিন, সাপোর্ট,
-দুই স্কুলের অ্যাডমিন/শিক্ষক/শিক্ষার্থী, কোঅর্ডিনেটর, দুই স্কুলের শিক্ষক, দুই স্কুলের অভিভাবক, SPARC Platform-এর স্বতন্ত্র শিক্ষার্থী আর কোর্স নির্মাতা।
-"বড় স্কুল" (৫,০৫১ সদস্য, ২ লাখ ইভেন্ট) শুধু `supabase/bench/`-এ।
+প্রতিষ্ঠান একটাই (SPARC, migration-এ তৈরি)। ৮ জন টেস্ট ইউজার (পাসওয়ার্ড `password123`, শুধু লোকাল): প্ল্যাটফর্ম অ্যাডমিন, সাপোর্ট,
+ইন্সট্রাক্টর, শিক্ষক, দুই শিক্ষার্থী, অভিভাবক, আর একজন যিনি শিক্ষক ও অভিভাবক দুটোই।
+বড় আকারের ডেটা (৫,০৫১ সদস্য, ২ লাখ ইভেন্ট) শুধু `supabase/bench/`-এ, আলাদা বেঞ্চ-প্রতিষ্ঠানে।

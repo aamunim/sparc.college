@@ -5,7 +5,7 @@ import { compareVersions, updateStatus } from '../version';
 const access: AccessEntry[] = [
   {
     institution_id: 'A',
-    role_keys: ['institution_admin'],
+    role_keys: ['instructor'],
     permissions: ['member.read', 'role.assign'],
   },
   { institution_id: 'B', role_keys: ['teacher'], permissions: ['institution.read'] },

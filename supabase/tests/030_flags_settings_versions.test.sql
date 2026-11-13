@@ -2,6 +2,12 @@
 begin;
 select plan(19);
 
+-- D19-এর পর "প্রতিষ্ঠান অ্যাডমিন" ভূমিকা নেই; প্রতিষ্ঠানভিত্তিক নিয়ম যাচাইয়ের জন্য শুধু টেস্টে একই অনুমতির ভূমিকা
+insert into public.roles (key, scope, name_bn, name_en, is_system) values ('test_admin', 'institution', 'টেস্ট অ্যাডমিন', 'Test admin', true);
+insert into public.role_permissions (role_id, permission_key)
+select r.id, p from public.roles r, unnest(array['institution.read', 'institution.manage', 'member.read', 'member.manage', 'role.assign', 'role.manage', 'settings.manage', 'audit.read']) p
+ where r.key = 'test_admin';
+
 create function pg_temp.login(p_user uuid, p_aal text default 'aal2') returns void
 language sql as $$
   select set_config('request.jwt.claims',
@@ -16,7 +22,7 @@ insert into auth.users (id, email) values
   ('50000000-0000-4000-8000-000000000002', 'fa-student@x.test'),
   ('50000000-0000-4000-8000-000000000003', 'platform-flags@x.test');
 insert into public.user_roles (user_id, role_id, institution_id) values
-  ('50000000-0000-4000-8000-000000000001', (select id from public.roles where key = 'institution_admin'), '40000000-0000-4000-8000-00000000000a'),
+  ('50000000-0000-4000-8000-000000000001', (select id from public.roles where key = 'test_admin'), '40000000-0000-4000-8000-00000000000a'),
   ('50000000-0000-4000-8000-000000000002', (select id from public.roles where key = 'student'), '40000000-0000-4000-8000-00000000000a'),
   ('50000000-0000-4000-8000-000000000003', (select id from public.roles where key = 'platform_admin'), (select id from public.institutions where type = 'platform'));
 

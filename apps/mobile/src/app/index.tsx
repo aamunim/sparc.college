@@ -4,7 +4,7 @@ import * as Updates from 'expo-updates';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { InstitutionSwitcher } from '@/features/access';
+import { MyRoles } from '@/features/access';
 import { PhoneLoginCard } from '@/features/auth-phone';
 import { DevLoginCard } from '@/features/dev-login';
 import { HomeMenu } from '@/features/home';
@@ -44,7 +44,7 @@ export default function HomeScreen() {
             </Text>
             <Button label={t('access.signOut')} variant="secondary" onPress={() => signOut()} />
           </Card>
-          <InstitutionSwitcher />
+          <MyRoles />
           <HomeMenu />
         </>
       ) : (

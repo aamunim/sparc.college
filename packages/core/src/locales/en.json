@@ -49,11 +49,11 @@
     "loading": "Loading…"
   },
   "access": {
-    "institution": "Institution",
     "signedInAs": "Signed in as {{email}}",
     "signOut": "Log out",
     "loadFailed": "Could not load — check your connection and try again",
-    "noMembership": "You are not part of any institution yet"
+    "myRoles": "My roles",
+    "noRole": "No role yet — you will be able to choose yours soon"
   },
   "menu": {
     "title": "Menu",
@@ -104,5 +104,15 @@
     "body": "The new version of SPARC has been downloaded. Restart once to start using it — it only takes a few seconds.",
     "restart": "Restart now",
     "later": "Later"
+  },
+  "role": {
+    "platform_admin": "Platform admin",
+    "platform_support": "Support",
+    "sparc_representative": "SPARC representative",
+    "instructor": "Instructor",
+    "teacher": "Teacher",
+    "student": "Student",
+    "parent": "Parent",
+    "researcher": "Research trainee"
   }
 }
