@@ -6,7 +6,7 @@ import type { i18n } from 'i18next';
 import { useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
-import { UpdateRequiredScreen, useUpdateStatus } from '@/features/app-update';
+import { UpdateReadyPrompt, UpdateRequiredScreen, useUpdateStatus } from '@/features/app-update';
 import { SessionProvider } from '@/features/session';
 import { useAppFonts } from '@/platform/fonts';
 import { setupI18n } from '@/platform/i18n';
@@ -23,7 +23,12 @@ type Boot = { i18n: i18n; themeMode: ThemeMode };
 function AppGate() {
   const { status, policy } = useUpdateStatus();
   if (status === 'required') return <UpdateRequiredScreen policy={policy} />;
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }} />
+      <UpdateReadyPrompt />
+    </>
+  );
 }
 
 function RootLayout() {

@@ -96,5 +96,11 @@
       "failed": "Couldn't send the code. Check your connection and try again.",
       "invalidCode": "The code is wrong or has expired"
     }
+  },
+  "otaUpdate": {
+    "title": "A new update is ready!",
+    "body": "The new version of SPARC has been downloaded. Restart once to start using it — it only takes a few seconds.",
+    "restart": "Restart now",
+    "later": "Later"
   }
 }

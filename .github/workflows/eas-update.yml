@@ -92,7 +92,10 @@ jobs:
         env:
           # commit message সরাসরি স্ক্রিপ্টে বসানো হয় না (script injection এড়াতে)
           UPDATE_MESSAGE: ${{ github.event.head_commit.message || github.sha }}
-        run: eas update --channel "$CHANNEL" --environment "$CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive
+        # বিল্ডের মতো একই পাবলিক কনফিগ (eas.json-এর build.<channel>.env) — না দিলে আপডেটে Supabase URL থাকবে না
+        run: |
+          eval "$(jq -r --arg c "$CHANNEL" '.build[$c].env // {} | to_entries[] | "export \(.key)=\(.value|@sh)"' eas.json)"
+          eas update --channel "$CHANNEL" --environment "$CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive
       - name: Upload source maps to Sentry
         if: steps.secrets.outputs.eas == 'true' && env.SENTRY_AUTH_TOKEN != ''
         run: npx sentry-expo-upload-sourcemaps dist

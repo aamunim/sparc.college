@@ -4,7 +4,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } fro
 import { StatusBar } from 'expo-status-bar';
 import { colorScheme as nativewindColorScheme, vars } from 'nativewind';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { useColorScheme, View } from 'react-native';
+import { useColorScheme, View, type ViewStyle } from 'react-native';
 
 import { readPreference, writePreference } from '@/platform/preferences';
 
@@ -98,6 +98,15 @@ export function ThemeProvider({
       </NavigationThemeProvider>
     </ThemeContext.Provider>
   );
+}
+
+/**
+ * Modal/portal আলাদা গাছে রেন্ডার হয় (বিশেষ করে ওয়েবে), তাই সেখানে রঙের CSS ভেরিয়েবল পৌঁছায় না।
+ * Modal-এর ভেতরের সবকিছু এটা দিয়ে মুড়ে দিন।
+ */
+export function ThemeScope({ children, style }: { children: ReactNode; style?: ViewStyle }) {
+  const { scheme } = useAppTheme();
+  return <View style={[{ flex: 1 }, schemeVars[scheme], style]}>{children}</View>;
 }
 
 export function useAppTheme(): ThemeContextValue {
