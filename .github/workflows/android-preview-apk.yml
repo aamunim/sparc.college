@@ -1,0 +1,57 @@
+# Expo অ্যাকাউন্ট ছাড়াই পরীক্ষার APK (GitHub runner-এ Gradle দিয়ে)।
+# - sparc-dev Supabase-এর সাথে যুক্ত; URL আর publishable key পাবলিক (গোপন নয়)।
+# - debug key দিয়ে সাইন করা — শুধু পরীক্ষার জন্য, Play Store-এ নয় (সেটা EAS Build-এর production প্রোফাইল)।
+# - ফল: GitHub Releases-এ "preview-<নম্বর>" নামে pre-release, ফোন থেকে সরাসরি APK নামানো যায়।
+name: Android preview APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-preview-apk
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      EXPO_PUBLIC_APP_ENV: staging
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL || 'https://zhhgnhtgtwjhjzbdchlg.supabase.co' }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_kOI_9M5XVeZGnuLXdG9Lbw_IrZpAVYY' }}
+      EXPO_PUBLIC_SENTRY_DSN: ${{ vars.EXPO_PUBLIC_SENTRY_DSN }}
+      # Sentry token নেই — বিল্ডের সময় source map আপলোড বন্ধ
+      SENTRY_DISABLE_AUTO_UPLOAD: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Generate native Android project
+        working-directory: apps/mobile
+        run: npx expo prebuild --platform android --no-install --clean
+      - name: Build release APK (arm64 only — almost all phones in use)
+        working-directory: apps/mobile/android
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
+      - name: Publish as pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: preview-${{ github.run_number }}
+        run: |
+          APK="sparc-preview-${{ github.run_number }}.apk"
+          cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "$APK"
+          gh release create "$TAG" "$APK" --prerelease --target "$GITHUB_SHA" \
+            --title "SPARC preview ${{ github.run_number }}" \
+            --notes "পরীক্ষার APK (sparc-dev)। commit $GITHUB_SHA। debug key দিয়ে সাইন করা — শুধু পরীক্ষার জন্য।"

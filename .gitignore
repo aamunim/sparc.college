@@ -46,3 +46,7 @@ example
 .next/
 out/
 next-env.d.ts
+
+# Expo prebuild-এর তৈরি নেটিভ ফোল্ডার (CI-তে বানানো হয়)
+apps/mobile/android
+apps/mobile/ios
