@@ -2,6 +2,7 @@
   "expo": {
     "name": "SPARC",
     "slug": "sparc",
+    "owner": "tareqmzayed",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -43,6 +44,14 @@
     },
     "runtimeVersion": {
       "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/77560b18-f868-4166-9cc3-fa02e7b733c3"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "77560b18-f868-4166-9cc3-fa02e7b733c3"
+      }
     }
   }
 }
