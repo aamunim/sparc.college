@@ -1,5 +1,6 @@
 # নেটিভ বিল্ড (APK/AAB) — হাতে চালানো যায়, বা v* tag দিলে production।
-# নোট: EAS ক্লাউড বিল্ডের ফ্রি কোটা সীমিত; শেষ হলে local প্রোফাইলে `eas build --local` (§১২.৩)।
+# ডিফল্ট: GitHub runner-এ `eas build --local` — Expo-র ফ্রি কোটা খরচ হয় না, সাইনিং key একই (Expo-তে রাখা)।
+# APK হলে GitHub Releases-এ pre-release হিসেবে দেওয়া হয় (ফোন থেকে সরাসরি নামানো যায়)।
 name: EAS Build
 
 on:
@@ -14,12 +15,12 @@ on:
       local:
         description: Build on the GitHub runner (saves EAS cloud quota)
         type: boolean
-        default: false
+        default: true
   push:
     tags: ['v*']
 
 permissions:
-  contents: read
+  contents: write
 
 defaults:
   run:
@@ -55,6 +56,11 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        if: steps.secrets.outputs.ok == 'true' && inputs.local == true
+        with:
+          distribution: temurin
+          java-version: 17
       - name: Install dependencies
         if: steps.secrets.outputs.ok == 'true'
         working-directory: .
@@ -64,9 +70,22 @@ jobs:
         run: eas build --platform android --profile "$PROFILE" --non-interactive --no-wait
       - name: Local build on runner
         if: steps.secrets.outputs.ok == 'true' && inputs.local == true
-        run: eas build --platform android --profile "$PROFILE" --non-interactive --local --output sparc-android-build
+        env:
+          SENTRY_DISABLE_AUTO_UPLOAD: 'true'
+        run: |
+          EXT=$([ "$PROFILE" = production ] && echo aab || echo apk)
+          eas build --platform android --profile "$PROFILE" --non-interactive --local --output "sparc-$PROFILE-${{ github.run_number }}.$EXT"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: steps.secrets.outputs.ok == 'true' && inputs.local == true
         with:
           name: sparc-android-${{ inputs.profile }}
-          path: apps/mobile/sparc-android-build
+          path: apps/mobile/sparc-${{ inputs.profile }}-${{ github.run_number }}.*
+      - name: Publish APK as pre-release
+        if: steps.secrets.outputs.ok == 'true' && inputs.local == true && inputs.profile != 'production'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "eas-$PROFILE-${{ github.run_number }}" "sparc-$PROFILE-${{ github.run_number }}.apk" \
+            --prerelease --target "$GITHUB_SHA" \
+            --title "SPARC $PROFILE ${{ github.run_number }} (EAS)" \
+            --notes "EAS বিল্ড ($PROFILE চ্যানেল, OTA আপডেট পায়)। commit $GITHUB_SHA।"
