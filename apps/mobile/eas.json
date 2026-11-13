@@ -13,6 +13,9 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PUBLIC_APP_ENV": "dev",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://zhhgnhtgtwjhjzbdchlg.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kOI_9M5XVeZGnuLXdG9Lbw_IrZpAVYY",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       }
     },
@@ -24,6 +27,9 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PUBLIC_APP_ENV": "staging",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://zhhgnhtgtwjhjzbdchlg.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kOI_9M5XVeZGnuLXdG9Lbw_IrZpAVYY",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       }
     },
