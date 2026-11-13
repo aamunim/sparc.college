@@ -11,12 +11,20 @@ export type Deps = {
   verify: (body: string, headers: Record<string, string>) => HookPayload;
   reserve: (phone: string) => Promise<ReserveResult>;
   provider: SmsProvider;
+  /** Android SMS Retriever-এর ১১ অক্ষরের অ্যাপ hash (থাকলে বার্তার শেষে বসে, কোড নিজে থেকে পড়া যায়) */
+  appHash?: string;
   log?: (line: string) => void;
 };
 
-export function otpMessage(otp: string): string {
+export function otpMessage(otp: string, appHash?: string): string {
   // ইংরেজি (GSM-7) রাখা হলো যাতে এক SMS-এ (১৬০ অক্ষর) ধরে; বাংলা হলে ৭০ অক্ষরে খরচ দ্বিগুণ হতো
-  return `Your SPARC code is ${otp}. Valid 5 min. Do not share it.`;
+  const text = `Your SPARC code is ${otp}. Valid 5 min. Do not share it.`;
+  // SMS Retriever-এর শর্ত: বার্তা ১৪০ বাইটের মধ্যে আর একদম শেষে hash
+  return appHash ? `${text}\n${appHash}` : text;
+}
+
+export function isValidAppHash(hash: string): boolean {
+  return /^[A-Za-z0-9+/]{11}$/.test(hash);
 }
 
 // Auth শুধু HTTP 200-এর body-তে থাকা error পড়ে ইউজারকে সেই কোড দেখায় (যেমন 429)।
@@ -65,7 +73,7 @@ export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
     }
     if (slot !== 'OK') return hookError(400, 'Invalid phone number');
 
-    const result = await deps.provider.send(phone, otpMessage(otp));
+    const result = await deps.provider.send(phone, otpMessage(otp, deps.appHash));
     if (!result.ok) {
       log(`[send-sms] ${deps.provider.name} failed for ${maskPhone(phone)}: ${result.reason}`);
       return hookError(500, 'Could not send SMS. Please try again later.');

@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import type { i18n } from 'i18next';
 import { useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { UpdateReadyPrompt, UpdateRequiredScreen, useUpdateStatus } from '@/features/app-update';
 import { SessionProvider } from '@/features/session';
@@ -51,15 +52,17 @@ function RootLayout() {
   if (!ready) return null;
 
   return (
-    <I18nextProvider i18n={boot.i18n}>
-      <QueryProvider>
-        <SessionProvider>
-          <ThemeProvider initialMode={boot.themeMode}>
-            <AppGate />
-          </ThemeProvider>
-        </SessionProvider>
-      </QueryProvider>
-    </I18nextProvider>
+    <KeyboardProvider>
+      <I18nextProvider i18n={boot.i18n}>
+        <QueryProvider>
+          <SessionProvider>
+            <ThemeProvider initialMode={boot.themeMode}>
+              <AppGate />
+            </ThemeProvider>
+          </SessionProvider>
+        </QueryProvider>
+      </I18nextProvider>
+    </KeyboardProvider>
   );
 }
 

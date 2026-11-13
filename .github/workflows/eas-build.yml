@@ -85,7 +85,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "eas-$PROFILE-${{ github.run_number }}" "sparc-$PROFILE-${{ github.run_number }}.apk" \
+          APK="sparc-$PROFILE-${{ github.run_number }}.apk"
+          # Android OTP অটোরিডের hash (SMS Retriever): প্যাকেজ + সাইনিং সার্টিফিকেট থেকে
+          HASH="(বের করা যায়নি — অ্যাপের নিচের সংস্করণ-লেখায় চাপ দিলে দেখা যাবে)"
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          if "$BT/apksigner" verify --print-certs-pem "$APK" > cert.pem 2>/dev/null && grep -q "BEGIN CERTIFICATE" cert.pem; then
+            PKG=$(jq -r '.expo.android.package' app.json)
+            HEX=$(openssl x509 -in cert.pem -outform der | xxd -p | tr -d '\n')
+            HASH=$(printf '%s %s' "$PKG" "$HEX" | openssl dgst -sha256 -binary | head -c 9 | base64 | cut -c1-11)
+          fi
+          echo "SMS app hash: $HASH"
+          gh release create "eas-$PROFILE-${{ github.run_number }}" "$APK" \
             --prerelease --target "$GITHUB_SHA" \
             --title "SPARC $PROFILE ${{ github.run_number }} (EAS)" \
-            --notes "EAS বিল্ড ($PROFILE চ্যানেল, OTA আপডেট পায়)। commit $GITHUB_SHA।"
+            --notes "EAS বিল্ড ($PROFILE চ্যানেল, OTA আপডেট পায়)। commit $GITHUB_SHA।
+
+          OTP অটোরিড hash (Supabase → Edge Functions → Secrets → \`SMS_APP_HASH\`): \`$HASH\`"

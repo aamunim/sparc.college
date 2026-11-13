@@ -1,8 +1,10 @@
 import { formatBdPhone, isLanguage, SUPPORTED_LANGUAGES, type Language } from '@sparc/core';
+import { getAppHashes } from '@modules/sms-retriever';
 import Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { MyRoles } from '@/features/access';
 import { PhoneLoginCard } from '@/features/auth-phone';
@@ -95,12 +97,22 @@ function Preferences() {
 }
 
 // কোন সংস্করণ চলছে তা দেখার জন্য (সমস্যা জানাতে সুবিধা): অ্যাপ ভার্সন + EAS আপডেটের ছোট আইডি
+// চাপ দিলে Android-এ OTP অটোরিডের hash দেখায় (সার্ভারের SMS_APP_HASH-এ বসাতে হয়)
 function VersionFooter() {
   const { t } = useTranslation();
+  const [showHash, setShowHash] = useState(false);
   const update = Updates.updateId ? Updates.updateId.slice(-6) : t('app.builtIn');
+  const hashes = showHash ? getAppHashes() : [];
   return (
-    <Text variant="caption" tone="muted" className="text-center">
-      {t('app.versionLine', { version: Constants.expoConfig?.version ?? '?', update })}
-    </Text>
+    <Pressable accessibilityRole="button" onPress={() => setShowHash((v) => !v)}>
+      <Text variant="caption" tone="muted" className="text-center">
+        {t('app.versionLine', { version: Constants.expoConfig?.version ?? '?', update })}
+      </Text>
+      {hashes.length > 0 ? (
+        <Text variant="caption" tone="muted" className="text-center" selectable>
+          {t('app.smsHash', { hash: hashes.join(', ') })}
+        </Text>
+      ) : null}
+    </Pressable>
   );
 }

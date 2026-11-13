@@ -1,5 +1,6 @@
 import { formatBdPhone, normalizeBdPhone, toLatinDigits } from '@sparc/core';
-import { useEffect, useState } from 'react';
+import { listenForOtp } from '@modules/sms-retriever';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextInput } from 'react-native';
 
@@ -22,6 +23,11 @@ export function PhoneLoginCard() {
   const [error, setError] = useState<ErrorKey | null>(null);
   const [busy, setBusy] = useState(false);
   const [resendIn, setResendIn] = useState(0);
+  const stopListening = useRef<() => void>(() => {});
+  const lastSubmitted = useRef('');
+
+  // স্ক্রিন বন্ধ হলে SMS শোনা বন্ধ
+  useEffect(() => () => stopListening.current(), []);
 
   useEffect(() => {
     if (resendIn <= 0) return;
@@ -42,6 +48,12 @@ export function PhoneLoginCard() {
   const send = async (target: string) => {
     setBusy(true);
     setError(null);
+    // Android: SMS আসার আগেই শোনা শুরু করতে হয় (SMS Retriever, অনুমতি লাগে না)
+    stopListening.current();
+    stopListening.current = listenForOtp((otp) => {
+      setCode(otp);
+      void verify(target, otp);
+    }, OTP_LENGTH);
     const result = await requestPhoneOtp(target);
     setBusy(false);
     if (result === 'sent') {
@@ -49,6 +61,7 @@ export function PhoneLoginCard() {
       setCode('');
       setResendIn(RESEND_SECONDS);
     } else {
+      stopListening.current();
       setError(result === 'rate_limited' ? 'rateLimited' : 'failed');
     }
   };
@@ -62,20 +75,36 @@ export function PhoneLoginCard() {
     void send(normalized);
   };
 
-  const submitCode = async () => {
+  const verify = useCallback(async (target: string, otp: string) => {
+    if (lastSubmitted.current === otp) return; // একই কোড দুবার নয় (অটোরিড + অটো-সাবমিট)
+    lastSubmitted.current = otp;
+    setBusy(true);
+    setError(null);
+    const result = await verifyPhoneOtp(target, otp);
+    setBusy(false);
+    if (result === 'ok') {
+      stopListening.current();
+      return;
+    }
+    lastSubmitted.current = '';
+    setError(
+      result === 'invalid' ? 'invalidCode' : result === 'rate_limited' ? 'rateLimited' : 'failed',
+    );
+  }, []);
+
+  const submitCode = () => {
     if (!phone || code.length !== OTP_LENGTH) {
       setError('invalidCode');
       return;
     }
-    setBusy(true);
-    setError(null);
-    const result = await verifyPhoneOtp(phone, code);
-    setBusy(false);
-    if (result !== 'ok') {
-      setError(
-        result === 'invalid' ? 'invalidCode' : result === 'rate_limited' ? 'rateLimited' : 'failed',
-      );
-    }
+    void verify(phone, code);
+  };
+
+  const onCodeChange = (value: string) => {
+    const digits = toLatinDigits(value).replace(/\D/g, '');
+    setCode(digits);
+    // ৬ অঙ্ক পূর্ণ হলে নিজে থেকেই যাচাই (কিবোর্ডের সাজেশন/অটোফিল থেকে এলেও)
+    if (phone && digits.length === OTP_LENGTH) void verify(phone, digits);
   };
 
   const errorText = error ? <Text tone="danger">{t(`phoneLogin.error.${error}`)}</Text> : null;
@@ -119,7 +148,7 @@ export function PhoneLoginCard() {
         textContentType="oneTimeCode"
         maxLength={OTP_LENGTH}
         value={code}
-        onChangeText={(v) => setCode(toLatinDigits(v).replace(/\D/g, ''))}
+        onChangeText={onCodeChange}
         onSubmitEditing={submitCode}
         style={{ ...inputStyle, letterSpacing: 6 }}
       />
@@ -138,6 +167,8 @@ export function PhoneLoginCard() {
         variant="ghost"
         disabled={busy}
         onPress={() => {
+          stopListening.current();
+          lastSubmitted.current = '';
           setPhone(null);
           setError(null);
         }}

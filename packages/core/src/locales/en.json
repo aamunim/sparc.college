@@ -2,7 +2,8 @@
   "app": {
     "tagline": "Learn, teach, research",
     "versionLine": "Version {{version}} · update {{update}}",
-    "builtIn": "built-in"
+    "builtIn": "built-in",
+    "smsHash": "SMS hash: {{hash}}"
   },
   "home": {
     "backend": {

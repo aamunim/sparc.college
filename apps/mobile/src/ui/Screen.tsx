@@ -1,8 +1,12 @@
 import type { ReactNode } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { cn } from './cn';
+
+/** ফোকাস করা ফিল্ড আর কিবোর্ডের মাঝে ফাঁকা জায়গা (নিচের বোতাম/এরর লেখা দেখা যায়) */
+const KEYBOARD_GAP = 96;
 
 export type ScreenProps = {
   children: ReactNode;
@@ -20,9 +24,13 @@ export function Screen({ children, scroll = true, className }: ScreenProps) {
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top', 'bottom', 'left', 'right']}>
       {scroll ? (
-        <ScrollView contentContainerClassName="grow" keyboardShouldPersistTaps="handled">
+        // কিবোর্ড খুললে ফোকাস করা টেক্সট ফিল্ড (আর তার নিচের বোতামের জায়গা) দেখা যায় এমনভাবে স্ক্রল করে
+        <KeyboardAwareScrollView
+          contentContainerClassName="grow"
+          keyboardShouldPersistTaps="handled"
+          bottomOffset={KEYBOARD_GAP}>
           {content}
-        </ScrollView>
+        </KeyboardAwareScrollView>
       ) : (
         content
       )}

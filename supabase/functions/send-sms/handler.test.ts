@@ -1,7 +1,13 @@
 // চালাতে: deno test supabase/functions
 import assert from 'node:assert/strict';
 import { Webhook } from 'standardwebhooks';
-import { createHandler, type HookPayload, type ReserveResult } from './handler.ts';
+import {
+  createHandler,
+  isValidAppHash,
+  otpMessage,
+  type HookPayload,
+  type ReserveResult,
+} from './handler.ts';
 import { createBulkSmsBdProvider } from '../_shared/sms/bulksmsbd.ts';
 import { maskPhone, type SmsProvider } from '../_shared/sms/types.ts';
 
@@ -148,4 +154,17 @@ Deno.test('bulksmsbd: other response codes and bad responses are failures', asyn
   });
   assert.equal((await mk(new Response('<html>', { status: 502 })).send('+880171', 'x')).ok, false);
   assert.equal((await mk(new Error('boom')).send('+880171', 'x')).ok, false);
+});
+
+Deno.test('app hash is appended last for Android SMS Retriever and fits 140 bytes', () => {
+  const msg = otpMessage('123456', 'FA+9qCX9VSu');
+  assert.ok(msg.endsWith('\nFA+9qCX9VSu'));
+  assert.ok(new TextEncoder().encode(msg).length <= 140);
+  assert.equal(otpMessage('123456'), 'Your SPARC code is 123456. Valid 5 min. Do not share it.');
+});
+
+Deno.test('app hash format is validated', () => {
+  assert.ok(isValidAppHash('FA+9qCX9VSu'));
+  assert.ok(!isValidAppHash('short'));
+  assert.ok(!isValidAppHash('FA+9qCX9VSu!'));
 });
