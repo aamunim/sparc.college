@@ -32,6 +32,8 @@ jobs:
     timeout-minutes: 90
     env:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
       PROFILE: ${{ inputs.profile || 'production' }}
     steps:
       - name: Check secrets
@@ -46,6 +48,15 @@ jobs:
           fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: steps.secrets.outputs.ok == 'true'
+      # নতুন APK যে সার্ভার-ফাংশনের ওপর নির্ভর করে (যেমন OTP অটোরিডের hash) সেটা আগে পৌঁছানো
+      - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
+        if: steps.secrets.outputs.ok == 'true' && env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
+        with:
+          version: 3.1.0
+      - name: Deploy Edge Functions
+        if: steps.secrets.outputs.ok == 'true' && env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
+        working-directory: .
+        run: supabase functions deploy --remote="$SUPABASE_PROJECT_REF" --use-api --yes
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.secrets.outputs.ok == 'true'
         with:
