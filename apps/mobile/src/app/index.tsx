@@ -1,4 +1,6 @@
 import { formatBdPhone, isLanguage, SUPPORTED_LANGUAGES, type Language } from '@sparc/core';
+import Constants from 'expo-constants';
+import * as Updates from 'expo-updates';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -53,6 +55,7 @@ export default function HomeScreen() {
       )}
 
       <Preferences />
+      <VersionFooter />
     </Screen>
   );
 }
@@ -88,5 +91,16 @@ function Preferences() {
         ))}
       </View>
     </Card>
+  );
+}
+
+// কোন সংস্করণ চলছে তা দেখার জন্য (সমস্যা জানাতে সুবিধা): অ্যাপ ভার্সন + EAS আপডেটের ছোট আইডি
+function VersionFooter() {
+  const { t } = useTranslation();
+  const update = Updates.updateId ? Updates.updateId.slice(-6) : t('app.builtIn');
+  return (
+    <Text variant="caption" tone="muted" className="text-center">
+      {t('app.versionLine', { version: Constants.expoConfig?.version ?? '?', update })}
+    </Text>
   );
 }

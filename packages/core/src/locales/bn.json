@@ -1,6 +1,8 @@
 {
   "app": {
-    "tagline": "শেখা, শেখানো, গবেষণা"
+    "tagline": "শেখা, শেখানো, গবেষণা",
+    "versionLine": "সংস্করণ {{version}} · আপডেট {{update}}",
+    "builtIn": "বিল্টইন"
   },
   "home": {
     "backend": {

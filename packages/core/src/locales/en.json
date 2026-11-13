@@ -1,6 +1,8 @@
 {
   "app": {
-    "tagline": "Learn, teach, research"
+    "tagline": "Learn, teach, research",
+    "versionLine": "Version {{version}} · update {{update}}",
+    "builtIn": "built-in"
   },
   "home": {
     "backend": {
