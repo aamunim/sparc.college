@@ -136,3 +136,25 @@ npx eas-cli@latest build --platform android --profile development
 | student2@sparc.test       | আরেক শিক্ষার্থী      |
 | parent@sparc.test         | অভিভাবক              |
 | teacher.parent@sparc.test | শিক্ষক ও অভিভাবক     |
+
+**৫. ইমেইল লগইন (Resend) — ফেজ ২.২**
+
+লোকালে ইমেইল যায় না, Mailpit-এ জমা হয়: http://127.0.0.1:54324
+
+প্রোডাকশন (Supabase ড্যাশবোর্ড):
+
+1. Authentication → **Emails → SMTP Settings** → Enable custom SMTP:
+   Host `smtp.resend.com`, Port `465`, Username `resend`, Password = Resend API key (চ্যাটে নয়),
+   Sender email `noreply@<আপনার-ডোমেইন>` (Resend-এ যাচাই করা ডোমেইন), Sender name `SPARC`।
+2. Authentication → **Emails → Templates** → "Magic Link" আর "Confirm signup" দুটোতেই:
+   Subject `SPARC লগইন কোড / login code: {{ .Token }}`, Body = `supabase/templates/otp-code.html`-এর লেখা।
+3. Authentication → Sign In / Providers → **Email**: Email OTP Expiration `300`, OTP length `6`।
+4. Authentication → Rate Limits → ইমেইল পাঠানোর সীমা প্রয়োজনমতো (custom SMTP চালু না হলে ঘণ্টায় মাত্র ২টা)।
+
+**৬. Google লগইন — ফেজ ২.২**
+
+1. Google Cloud Console → APIs & Services → **OAuth consent screen**: অ্যাপের নাম SPARC, সাপোর্ট ইমেইল, লোগো।
+2. **Credentials → Create credentials → OAuth client ID → Web application**:
+   Authorized redirect URI = `https://<project-ref>.supabase.co/auth/v1/callback`।
+3. Supabase → Authentication → Sign In / Providers → **Google**: Client ID আর Client Secret বসিয়ে চালু।
+4. Supabase → Authentication → **URL Configuration** → Redirect URLs-এ যোগ করুন: `sparc://**` আর ওয়েব অ্যাপের ঠিকানা।

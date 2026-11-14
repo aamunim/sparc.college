@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { MyRoles } from '@/features/access';
-import { PhoneLoginCard } from '@/features/auth-phone';
+import { LoginCard } from '@/features/auth';
 import { DevLoginCard } from '@/features/dev-login';
 import { HomeMenu } from '@/features/home';
 import { signOut, useSession } from '@/features/session';
@@ -51,7 +51,7 @@ export default function HomeScreen() {
         </>
       ) : (
         <>
-          <PhoneLoginCard />
+          <LoginCard />
           {appConfig.appEnv === 'dev' ? <DevLoginCard /> : null}
         </>
       )}

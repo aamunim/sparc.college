@@ -79,27 +79,6 @@
     "submit": "Log in",
     "error": "Email or password is incorrect"
   },
-  "phoneLogin": {
-    "title": "Log in with phone",
-    "phoneHint": "Enter your mobile number. We'll send a 6-digit code by SMS.",
-    "phoneLabel": "Mobile number",
-    "phonePlaceholder": "01XXXXXXXXX",
-    "sendCode": "Send code",
-    "codeTitle": "Enter code",
-    "codeSentTo": "Code sent to {{phone}}",
-    "codeLabel": "6-digit code",
-    "codePlaceholder": "123456",
-    "verify": "Log in",
-    "resend": "Resend code",
-    "resendIn": "Resend in {{seconds}} s",
-    "changeNumber": "Change number",
-    "error": {
-      "invalidPhone": "Enter a valid Bangladeshi mobile number (starts with 01, 11 digits)",
-      "rateLimited": "Too many attempts. Please try again later.",
-      "failed": "Couldn't send the code. Check your connection and try again.",
-      "invalidCode": "The code is wrong or has expired"
-    }
-  },
   "otaUpdate": {
     "title": "A new update is ready!",
     "body": "The new version of SPARC has been downloaded. Restart once to start using it — it only takes a few seconds.",
@@ -115,5 +94,37 @@
     "student": "Student",
     "parent": "Parent",
     "researcher": "Research trainee"
+  },
+  "login": {
+    "title": "Log in",
+    "tabPhone": "Phone",
+    "tabEmail": "Email",
+    "phoneHint": "Enter your mobile number. We'll send a 6-digit code by SMS.",
+    "phoneLabel": "Mobile number",
+    "phonePlaceholder": "01XXXXXXXXX",
+    "emailHint": "Enter your email. We'll send a 6-digit code by email.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "sendCode": "Send code",
+    "codeTitle": "Enter code",
+    "codeSentTo": "Code sent to {{target}}",
+    "emailSpamHint": "No email? Check your Spam or Promotions folder.",
+    "codeLabel": "6-digit code",
+    "codePlaceholder": "123456",
+    "verify": "Log in",
+    "resend": "Resend code",
+    "resendIn": "Resend in {{seconds}} s",
+    "changePhone": "Change number",
+    "changeEmail": "Change email",
+    "or": "or",
+    "google": "Continue with Google",
+    "error": {
+      "invalidPhone": "Enter a valid Bangladeshi mobile number (starts with 01, 11 digits)",
+      "invalidEmail": "Enter a valid email address",
+      "rateLimited": "Too many attempts. Please try again later.",
+      "failed": "Couldn't send the code. Check your connection and try again.",
+      "invalidCode": "The code is wrong or has expired",
+      "googleFailed": "Google sign-in didn't complete. Please try again."
+    }
   }
 }

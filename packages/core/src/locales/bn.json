@@ -79,27 +79,6 @@
     "submit": "লগইন",
     "error": "ইমেইল বা পাসওয়ার্ড ঠিক নেই"
   },
-  "phoneLogin": {
-    "title": "ফোন নম্বর দিয়ে লগইন",
-    "phoneHint": "আপনার মোবাইল নম্বর দিন। একটা ৬ অঙ্কের কোড SMS-এ যাবে।",
-    "phoneLabel": "মোবাইল নম্বর",
-    "phonePlaceholder": "01XXXXXXXXX",
-    "sendCode": "কোড পাঠান",
-    "codeTitle": "কোড দিন",
-    "codeSentTo": "{{phone}} নম্বরে কোড পাঠানো হয়েছে",
-    "codeLabel": "৬ অঙ্কের কোড",
-    "codePlaceholder": "১২৩৪৫৬",
-    "verify": "লগইন",
-    "resend": "আবার কোড পাঠান",
-    "resendIn": "আবার পাঠানো যাবে {{seconds}} সেকেন্ড পরে",
-    "changeNumber": "নম্বর বদলান",
-    "error": {
-      "invalidPhone": "সঠিক বাংলাদেশি মোবাইল নম্বর দিন (01 দিয়ে শুরু, ১১ অঙ্ক)",
-      "rateLimited": "অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।",
-      "failed": "কোড পাঠানো যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
-      "invalidCode": "কোডটা ঠিক নেই বা মেয়াদ শেষ"
-    }
-  },
   "otaUpdate": {
     "title": "নতুন আপডেট এসেছে!",
     "body": "SPARC-এর নতুন সংস্করণ নামানো হয়ে গেছে। চালু করতে একবার রিস্টার্ট করুন — মাত্র কয়েক সেকেন্ড লাগবে।",
@@ -115,5 +94,37 @@
     "student": "শিক্ষার্থী",
     "parent": "অভিভাবক",
     "researcher": "গবেষণা প্রশিক্ষণার্থী"
+  },
+  "login": {
+    "title": "লগইন করুন",
+    "tabPhone": "ফোন",
+    "tabEmail": "ইমেইল",
+    "phoneHint": "আপনার মোবাইল নম্বর দিন। একটা ৬ অঙ্কের কোড SMS-এ যাবে।",
+    "phoneLabel": "মোবাইল নম্বর",
+    "phonePlaceholder": "01XXXXXXXXX",
+    "emailHint": "আপনার ইমেইল দিন। একটা ৬ অঙ্কের কোড ইমেইলে যাবে।",
+    "emailLabel": "ইমেইল",
+    "emailPlaceholder": "you@example.com",
+    "sendCode": "কোড পাঠান",
+    "codeTitle": "কোড দিন",
+    "codeSentTo": "{{target}}-এ কোড পাঠানো হয়েছে",
+    "emailSpamHint": "ইমেইল না পেলে Spam বা Promotions ফোল্ডার দেখুন।",
+    "codeLabel": "৬ অঙ্কের কোড",
+    "codePlaceholder": "১২৩৪৫৬",
+    "verify": "লগইন",
+    "resend": "আবার কোড পাঠান",
+    "resendIn": "আবার পাঠানো যাবে {{seconds}} সেকেন্ড পরে",
+    "changePhone": "নম্বর বদলান",
+    "changeEmail": "ইমেইল বদলান",
+    "or": "অথবা",
+    "google": "Google দিয়ে লগইন",
+    "error": {
+      "invalidPhone": "সঠিক বাংলাদেশি মোবাইল নম্বর দিন (01 দিয়ে শুরু, ১১ অঙ্ক)",
+      "invalidEmail": "সঠিক ইমেইল ঠিকানা দিন",
+      "rateLimited": "অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।",
+      "failed": "কোড পাঠানো যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
+      "invalidCode": "কোডটা ঠিক নেই বা মেয়াদ শেষ",
+      "googleFailed": "Google দিয়ে লগইন হয়নি। আবার চেষ্টা করুন।"
+    }
   }
 }

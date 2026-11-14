@@ -18,6 +18,8 @@ export function createSupabaseClient(
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: options.detectSessionInUrl,
+      // PKCE: Google লগইনের পর ফেরত আসা লিংকে টোকেন নয়, এককালীন কোড থাকে (ফোনে অন্য অ্যাপ লিংক ধরলেও নিরাপদ)
+      flowType: 'pkce',
     },
   });
 }
