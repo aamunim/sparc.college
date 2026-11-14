@@ -110,5 +110,6 @@
 
 - ডোমেইন: **`sparc.college`** (Resend-এ যাচাই করা)।
 - লগইন ইমেইলের প্রেরক: `noreply@sparc.college`, নাম "SPARC"; Supabase Auth-এর custom SMTP = Resend (D16)।
-- বাকি: Google OAuth consent screen-এর সাপোর্ট ইমেইল; ওয়েব হোস্টিং/DNS (D11) — App Links-এর জন্য দরকার।
+- সাপোর্ট ইমেইল: **`support@sparc.college`** (অ্যাপ, ওয়েবসাইট, Play Store listing-এ)। Google consent screen-এ শুধু Google অ্যাকাউন্ট বা Google Group-এর ঠিকানা চলে — না হলে সেখানে মালিকের Gmail।
+- ডোমেইন কেনা ও DNS: **Namecheap**। ওয়েব হোস্টিং (D11) — খোলা, App Links-এর জন্য দরকার।
 
