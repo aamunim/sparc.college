@@ -16,7 +16,8 @@
         "EXPO_PUBLIC_APP_ENV": "dev",
         "EXPO_PUBLIC_SUPABASE_URL": "https://zhhgnhtgtwjhjzbdchlg.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kOI_9M5XVeZGnuLXdG9Lbw_IrZpAVYY",
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "829253354140-jj2o921ricf8h5hanqkgcusm1qs85l1h.apps.googleusercontent.com"
       }
     },
     "preview": {
@@ -30,7 +31,8 @@
         "EXPO_PUBLIC_APP_ENV": "staging",
         "EXPO_PUBLIC_SUPABASE_URL": "https://zhhgnhtgtwjhjzbdchlg.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kOI_9M5XVeZGnuLXdG9Lbw_IrZpAVYY",
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "829253354140-jj2o921ricf8h5hanqkgcusm1qs85l1h.apps.googleusercontent.com"
       }
     },
     "production": {

@@ -10,6 +10,8 @@ const envSchema = z.object({
   supabaseUrl: z.url().optional(),
   supabaseAnonKey: z.string().min(20).optional(),
   sentryDsn: z.url().optional(),
+  // Google Cloud-এর Web OAuth client ID (পাবলিক) — অ্যাপের নেটিভ Google লগইন এটা দিয়ে idToken চায়
+  googleWebClientId: z.string().endsWith('.apps.googleusercontent.com').optional(),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;
@@ -19,6 +21,7 @@ export type RawEnv = {
   supabaseUrl?: string;
   supabaseAnonKey?: string;
   sentryDsn?: string;
+  googleWebClientId?: string;
 };
 
 /** খালি স্ট্রিংকে "নেই" ধরে যাচাই করে; ভুল মান থাকলে কোন ঘরে ভুল তা জানিয়ে এরর দেয়। */

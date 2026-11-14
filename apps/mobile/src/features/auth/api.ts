@@ -1,7 +1,3 @@
-import * as Linking from 'expo-linking';
-import * as WebBrowser from 'expo-web-browser';
-import { Platform } from 'react-native';
-
 import { getSupabase } from '@/platform/supabase';
 
 // লগইন (ফেজ ২.১–২.২): ফোন OTP, ইমেইল OTP, Google।
@@ -10,7 +6,6 @@ import { getSupabase } from '@/platform/supabase';
 export type OtpChannel = 'phone' | 'email';
 export type OtpRequestResult = 'sent' | 'rate_limited' | 'failed';
 export type OtpVerifyResult = 'ok' | 'invalid' | 'rate_limited' | 'failed';
-export type GoogleResult = 'ok' | 'cancelled' | 'failed' | 'redirected';
 
 type AuthError = { status?: number } | null;
 
@@ -48,25 +43,5 @@ export async function verifyOtp(
   return verifyResult(error);
 }
 
-// Google: ব্রাউজারে Google-এর নিজের পাতা (পাসওয়ার্ড অ্যাপ দেখে না) → sparc://auth-callback?code=… → সেশন।
-// ওয়েবে পুরো পাতা Google-এ যায় আর ফিরে এসে Supabase নিজেই কোড ধরে (detectSessionInUrl)।
-WebBrowser.maybeCompleteAuthSession();
-
-export async function signInWithGoogle(): Promise<GoogleResult> {
-  const supabase = getSupabase();
-  const redirectTo = Linking.createURL('auth-callback');
-  const isWeb = Platform.OS === 'web';
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo, skipBrowserRedirect: !isWeb, queryParams: { prompt: 'select_account' } },
-  });
-  if (error || !data.url) return 'failed';
-  if (isWeb) return 'redirected';
-
-  const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
-  if (result.type !== 'success') return 'cancelled';
-  const code = new URL(result.url).searchParams.get('code');
-  if (!code) return 'failed';
-  const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-  return exchangeError ? 'failed' : 'ok';
-}
+// Google: অ্যাপে নেটিভ অ্যাকাউন্ট বাছাই (google.ts), ওয়েবে Supabase-এর OAuth (google.web.ts)
+export { signInWithGoogle } from './google';

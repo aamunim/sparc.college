@@ -6,4 +6,5 @@ export const appConfig: AppConfig = parseEnv({
   supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
   supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
   sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  googleWebClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
 });
