@@ -38,3 +38,4 @@
 - **Auth hook-এর ভুল ফেরত:** HTTP 200 + `{error:{http_code,message}}` দিলে ইউজার সেই কোড পায়; অন্য HTTP status দিলে অস্পষ্ট 500।
 - **লোকাল CLI-তে SMS hook:** কোনো SMS প্রোভাইডার চালু না দেখলে ফোন লগইন বন্ধ করে দেয় — config.toml-এ অকেজো Twilio placeholder রাখা হয়েছে।
 - **BulkSMSBD:** POST `api_key`, `type=text`, `number=8801…`, `senderid`, `message` → সফলে `response_code` 202 — ২০২৬-১১-১৩ আসল SMS পাঠিয়ে নিশ্চিত।
+- **Google লগইন (Android):** ব্রাউজার-OAuth-এ Google-এর পাতায় `<ref>.supabase.co` দেখায় — তাই নেটিভ `@react-native-google-signin` + `signInWithIdToken`। Google Cloud-এ Web client (Supabase-এর জন্য) আর Android client (package + সাইনিং SHA-1) দুটোই লাগে; SHA-1 আর SMS hash EAS বিল্ডের Release নোটে আসে। Play Store-এর app signing key এলে তার SHA-1-ও যোগ করতে হবে। (২০২৬-১১-১৪, ফোনে নিশ্চিত)
