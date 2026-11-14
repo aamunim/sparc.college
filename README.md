@@ -145,7 +145,7 @@ npx eas-cli@latest build --platform android --profile development
 
 1. Authentication → **Emails → SMTP Settings** → Enable custom SMTP:
    Host `smtp.resend.com`, Port `465`, Username `resend`, Password = Resend API key (চ্যাটে নয়),
-   Sender email `noreply@<আপনার-ডোমেইন>` (Resend-এ যাচাই করা ডোমেইন), Sender name `SPARC`।
+   Sender email `noreply@sparc.college` (Resend-এ যাচাই করা ডোমেইন), Sender name `SPARC`।
 2. Authentication → **Emails → Templates** → "Magic Link" আর "Confirm signup" দুটোতেই:
    Subject `SPARC লগইন কোড / login code: {{ .Token }}`, Body = `supabase/templates/otp-code.html`-এর লেখা।
 3. Authentication → Sign In / Providers → **Email**: Email OTP Expiration `300`, OTP length `6`।
