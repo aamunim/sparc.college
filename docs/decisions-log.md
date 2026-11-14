@@ -111,5 +111,7 @@
 - ডোমেইন: **`sparc.college`** (Resend-এ যাচাই করা)।
 - লগইন ইমেইলের প্রেরক: `noreply@sparc.college`, নাম "SPARC"; Supabase Auth-এর custom SMTP = Resend (D16)।
 - সাপোর্ট ইমেইল: **`support@sparc.college`** (অ্যাপ, ওয়েবসাইট, Play Store listing-এ)। Google consent screen-এ শুধু Google অ্যাকাউন্ট বা Google Group-এর ঠিকানা চলে — না হলে সেখানে মালিকের Gmail।
-- ডোমেইন কেনা ও DNS: **Namecheap**। ওয়েব হোস্টিং (D11) — খোলা, App Links-এর জন্য দরকার।
+- ডোমেইন কেনা ও DNS: **Namecheap** — সেখানেই থাকবে।
+- **D11 (চূড়ান্ত):** `sparc.college`-এ এখনকার ওয়েবসাইট যেমন আছে থাকবে। অ্যাপের ওয়েব সংস্করণ পরে **`app.sparc.college`**, অ্যাডমিন প্যানেল **`admin.sparc.college`** — দুটোই Cloudflare Pages-এ (ফ্রি), Namecheap-এ শুধু CNAME রেকর্ড। Nameserver বদল নয় (Resend-এর রেকর্ড অক্ষত)।
+- **App Links** (`https://app.sparc.college/...` লিংক সরাসরি অ্যাপে) — ওয়েব সংস্করণ চালুর সাথে করা হবে। লগইন এর ওপর নির্ভর করে না: ইমেইল/SMS-এ লিংক নয় কোড যায়, আর Google লগইন `sparc://` দিয়ে ফেরে।
 
