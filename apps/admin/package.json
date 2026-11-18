@@ -12,7 +12,7 @@
     "@expo-google-fonts/hind-siliguri": "^0.4.1",
     "@sparc/core": "*",
     "@supabase/supabase-js": "^2.119.0",
-    "i18next": "^27.1.1",
+    "i18next": "^27.1.2",
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
