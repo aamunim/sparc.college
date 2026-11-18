@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
-    "i18next": "^27.1.1",
+    "i18next": "^27.1.2",
     "zod": "^4.6.7"
   }
 }
